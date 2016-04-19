@@ -1,28 +1,13 @@
-Javascript Tetris
-=================
+Alunos: Alesom Zorzi, Igor Beilner e Régis Thiago Feyh
+Disciplina: Computação Distribuida
 
-An HTML5 Tetris Game
+DISTRIBUTED TETRIS
 
- * [play the game](http://codeincomplete.com/projects/tetris/)
- * read a [blog article](http://codeincomplete.com/posts/2011/10/10/javascript_tetris/)
- * view the [source](https://github.com/jakesgordon/javascript-tetris)
-
->> _*SUPPORTED BROWSERS*: Chrome, Firefox, Safari, Opera and IE9+_
-
-FUTURE
-======
-
- * menu
- * animation and fx
- * levels
- * high scores
- * touch support
- * music and sound fx
+O objetivo é fazer um jogo de tetris distribuido. 
+Todas as pessoas conectadas no jogo farão sua jogada e a cada jogada feita o sistema computada a jogada de todos os jogadores, a jogada mais votada se torna real. 
 
 
-License
-=======
+No servidor ficará a o estado global do jogo, quando o jogador (cliente) terminar sua jogada será enviado ao servidor a posição de onde foi colocada a peça. 
+O servidor assim recebe todos os votos e depois de computados os votos o servidor envia ao cliente a resposta da votação atualizando assim o tabuleiro do usuário caso a escolha votada tenha sido diferente da jogador.
 
-[MIT](http://en.wikipedia.org/wiki/MIT_License) license.
 
-Teste
