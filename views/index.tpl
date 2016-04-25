@@ -19,15 +19,11 @@
     </canvas>
   </div>
 
+  <script src="/static/js/jquery-2.2.3.min.js"></script>
   <script src="/static/js/stats.js"></script>
   <script src="/static/js/game.js"></script>
   <script>
-    //-------------------------------------------------------------------------
-    // FINALLY, lets run the game
-    //-------------------------------------------------------------------------
-
     run();
-
   </script>
 
 </body>

@@ -115,12 +115,15 @@ function unoccupied(type, x, y, dir) {
 // pick randomly until the 'bag is empty'
 //-----------------------------------------
 var pieces = [];
+// primeira peça sempre é essa, depois busca as próximas do servidor
+var rand = {y: 0, dir: 0, x: 7, type: o};
 function randomPiece() {
-  if (pieces.length == 0)
-    pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
-  var type = pieces.splice(random(0, pieces.length-1), 1)[0];
-  return { type: type, dir: DIR.UP, x: Math.round(random(0, nx - type.size)), y: 0 };
+  $.get('/next-piece/', function(response) {
+    rand = response;
+  }, 'json');
+  return rand;
 }
+randomPiece();
 
 
 //-------------------------------------------------------------------------
