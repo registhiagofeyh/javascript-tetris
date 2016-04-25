@@ -21,25 +21,50 @@ ny      = 20 # height of tetris court (in blocks)
 nu      = 5  # width/height of upcoming preview (in blocks)
 
 
-
+currentID = 1
 # Seleção aleatória de peças.
 pieces = []
+sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o}} # peça 0 sempre é a mesma
+jogadas = {}
+nextPiece = None # sorteada
 @get('/next-piece/')
 def randomPiece():
-	global response
-	global pieces
-
+	global response, pieces, nextPiece, currentID, sendedPieces
 	response.content_type = 'application/json'
+
 	if (pieces.__len__() == 0):
 		pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
 	type = pieces[randint(0, pieces.__len__()-1)]
-	return json.dumps({
+	nextPiece = {
 		'type': type, 
 		'dir': DIR['UP'], 
 		'x': randint(0, nx - type['size']), 
-		'y': 0
-	})
+		'y': 0,
+		'id': currentID
+	}
+	sendedPieces[currentID] = nextPiece
+	currentID = currentID + 1
 
+	return json.dumps(nextPiece)
+
+
+@post('/jogada/')
+def sendjogada():
+	global nextPiece, sendedPieces, jogadas
+
+	jogadas[int(request.forms.get('id'))] = {
+		'type': sendedPieces[int(request.forms.get('id'))]['type'],
+		'dir': int(request.forms.get('dir')),
+		'x': int(request.forms.get('x')),
+		'y': int(request.forms.get('y')),
+	}
+
+
+@get('/jogada/')
+@view('jogada')
+def getjogada():
+	global jogadas
+	return {'jogadas': jogadas}
 
 
 @get('/')

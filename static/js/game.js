@@ -116,7 +116,7 @@ function unoccupied(type, x, y, dir) {
 //-----------------------------------------
 var pieces = [];
 // primeira peça sempre é essa, depois busca as próximas do servidor
-var rand = {y: 0, dir: 0, x: 7, type: o};
+var rand = {y: 0, dir: 0, x: 7, type: o, id: 0};
 function randomPiece() {
   $.get('/next-piece/', function(response) {
     rand = response;
@@ -285,6 +285,7 @@ function drop() {
 }
 
 function dropPiece() {
+  $.post('/jogada/', current)
   eachblock(current.type, current.x, current.y, current.dir, function(x, y) {
     setBlock(x, y, current.type);
   });
