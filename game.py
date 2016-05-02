@@ -67,6 +67,22 @@ def getjogada():
 	return {'jogadas': jogadas}
 
 
+@post('/reset/')
+def resetgame():
+	global jogadas
+	jogadas = {}
+
+
+@get('/reset/')
+def resetgame():
+	global jogadas, currentID, sendedPieces
+	sendedPieces.clear()
+	sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o}}
+	currentID = 1
+	jogadas = {}
+	return {}
+
+
 @get('/')
 @view('index')
 def index():
