@@ -53,11 +53,12 @@ def randomPiece():
 @get('/matriz')
 def printMatriz():
 	global matrizJogada
+	print( matrizJogada)
 	return {'matrizJogada': matrizJogada}
 	
 def atualizaMatriz(x, y, block, value):
 	global matrizJogada
-	print (str(x) + " " + str(y) + " " + str(block))
+	print (str(x) + " " + str(y) + " " + str(block) + " " + str(value))
 	#a = block % 16
 	#block = block / 16
 	
@@ -80,7 +81,8 @@ def atualizaMatriz(x, y, block, value):
 		if a >= 1:
 			a = a -1
 			matrizJogada[x + i][y + 3] = value
-			
+		
+		
 			
 @post('/jogada/')
 def sendjogada():
