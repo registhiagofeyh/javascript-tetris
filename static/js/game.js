@@ -293,10 +293,7 @@ function drop() {
 }
 
 function dropPiece() {
-<<<<<<< HEAD
-=======
   pause = true;
->>>>>>> 7df9254f35ee58dfe53ec98635cd43be75cab7ce
   $.post('/jogada/', current)
   eachblock(current.type, current.x, current.y, current.dir, function(x, y) {
     setBlock(x, y, current.type);
