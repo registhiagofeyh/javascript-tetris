@@ -53,19 +53,16 @@ def randomPiece():
 @get('/matriz')
 def printMatriz():
 	global matrizJogada
-	print( matrizJogada)
 	return {'matrizJogada': matrizJogada}
 	
 def atualizaMatriz(x, y, block, value):
 	global matrizJogada
 	print (str(x) + " " + str(y) + " " + str(block) + " " + str(value))
-	#a = block % 16
-	#block = block / 16
 	
-	for i in range(3, 0):
+	for i in range(3, 0, -1):
 		a = block % 16
 		block = block / 16
-		
+		print (str(a) + " " + str(block))
 		if a >= 8:
 			matrizJogada[x + i][y] = value
 			a = a - 8
@@ -82,7 +79,8 @@ def atualizaMatriz(x, y, block, value):
 			a = a -1
 			matrizJogada[x + i][y + 3] = value
 		
-		
+	for i in matrizJogada:
+		print (i)
 			
 @post('/jogada/')
 def sendjogada():
@@ -192,9 +190,9 @@ def index():
 def send_static(path):
 	return static_file(path, root='static')
 
-for i in range(0, nx):
+for i in range(0, ny):
 	linha = []
-	for j in range(0, ny):
+	for j in range(0, nx):
 		linha.append(-1)
 	matrizJogada.append(linha)
 
