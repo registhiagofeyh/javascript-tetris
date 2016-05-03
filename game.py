@@ -36,11 +36,11 @@ def randomPiece():
 		
 	randomValue = randint(0, pieces.__len__()-1)
 	tipo = pieces[randomValue]
-	print("Tipo:\n")
-	print(tipo)
-	print(randomValue)
-	print(pieces[randomValue])
-	# print(pieces)
+	#	print("Tipo:\n")
+	#	print(tipo)
+	#	print(randomValue)
+	#	print(pieces[randomValue])
+	#	print(pieces)
 	nextPiece = {
 		'type': tipo, 
 		'dir': DIR['UP'], 
@@ -54,42 +54,90 @@ def randomPiece():
 	return json.dumps(nextPiece)
 
 
+'''@post('/rmLine')
+def rmLine():
+	n = request.forms.get('n')
+
+	for i in range(0, n):
+		linha = []
+		if i == 0:
+			linha.append(-1)
+		else:
+			for j in range(0, nx):
+				linha.append(-1)
+	matrizJogada.append(linha)
+
+	return {}
+'''
+
 @get('/matriz')
 def printMatriz():
 	global matrizJogada
 	return {'matrizJogada': matrizJogada}
+
+
+def rmLine( n ):
+	global matrizJogada
+	print ("Linha removida: " + str(n))
+	for ii in range(n, -1, -1):
+		linha = []
+		for j in range(0, nx):
+			if ii == 0:
+				linha.append(-1)
+			else:
+				linha.append(matrizJogada[ii-1][j])
+		matrizJogada[ii] = 	linha
+
+
+def lineisFull(ii):
+	global matrizJogada
+	isFull = 0
+	print (ii)
+	for j in range(nx):
+		if matrizJogada[ii][j]== -1:
+			return False
+	
+	return True
+	
+def someLineIsFull():
+	global matrizJogada
+	for ii in range(ny - 1, -1, -1):
+		while lineisFull(ii) == True:
+			rmLine(ii)
+	
+		
 	
 def atualizaMatriz(x, y, block, value):
 	global matrizJogada
 	print (str(x) + " " + str(y) + " " + str(block) + " " + str(value))
 	
-	for i in range(3, -1, -1):
+	for ii in range(3, -1, -1):
 		a = block % 16
 		block = int(block / 16)
 		print (str(a) + " " + str(block))
 		if a >= 8:
-			matrizJogada[y + i][x] = value
+			matrizJogada[y + ii][x] = value
 			a = a - 8
 		
 		if a >= 4:
-			matrizJogada[y + i][x + 1] = value
+			matrizJogada[y + ii][x + 1] = value
 			a = a - 4
 			
 		if a >=2:
 			a = a-2
-			matrizJogada[y + i][x + 2] = value
+			matrizJogada[y + ii][x + 2] = value
 			
 		if a >= 1:
 			a = a -1
-			matrizJogada[y + i][x + 3] = value
-		
-	for i in matrizJogada:
-		print (i)
+			matrizJogada[y + ii][x + 3] = value
+	
+	someLineIsFull()
+	for ii in matrizJogada:
+		print (ii)
 			
 @post('/jogada/')
 def sendjogada():
-	global nextPiece, sendedPieces, jogadas
-	global matrizJogada
+	global nextPiece, sendedPieces, jogadas, i, j, l, o, s, t, z, matrizJogada
 	jogadas[int(request.forms.get('id'))] = {
 		'type': sendedPieces[int(request.forms.get('id'))]['type'],
 		'dir': int(request.forms.get('dir')),
@@ -102,8 +150,9 @@ def sendjogada():
 	y = jogadas[index]['y']
 	Jdir = jogadas[index]['dir']
 	tipo = jogadas[index]['type']
-	
-	print ("ent")
+
+	print (tipo)
+	print (i)
 	if tipo == i:
 		if Jdir == 0:
 			atualizaMatriz(x, y, 0x0F00, 0)
@@ -194,7 +243,7 @@ def index():
 def send_static(path):
 	return static_file(path, root='static')
 
-for i in range(0, ny):
+for ii in range(0, ny):
 	linha = []
 	for j in range(0, nx):
 		linha.append(-1)

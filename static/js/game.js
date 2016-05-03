@@ -286,11 +286,10 @@ function drop() {
 }
 
 function dropPiece() {
-  console.log(blocks);
   $.post('/jogada/', current)
   eachblock(current.type, current.x, current.y, current.dir, function(x, y) {
     setBlock(x, y, current.type);
-  });
+  }); console.log(blocks);
 }
 
 function removeLines() {
@@ -314,11 +313,12 @@ function removeLines() {
 }
 
 function removeLine(n) {
-  var x, y;
-  for(y = n ; y >= 0 ; --y) {
-    for(x = 0 ; x < nx ; ++x)
-      setBlock(x, y, (y == 0) ? null : getBlock(x, y-1));
-  }
+	//$.post('/rmLine', {n: n})
+	var x, y;
+	for(y = n ; y >= 0 ; --y) {
+		for(x = 0 ; x < nx ; ++x)
+		setBlock(x, y, (y == 0) ? null : getBlock(x, y-1));
+	}
 }
 
 //-------------------------------------------------------------------------
