@@ -40,7 +40,7 @@ def randomPiece():
 	nextPiece = {
 		'type': type, 
 		'dir': DIR['UP'], 
-		'x': randint(0, nx - type['size']), 
+		'x': randint(0, nx - int (type['size'])), 
 		'y': 0,
 		'id': currentID
 	}
