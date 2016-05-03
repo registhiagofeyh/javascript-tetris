@@ -23,24 +23,28 @@ nu      = 5  # width/height of upcoming preview (in blocks)
 
 currentID = 1
 # Seleção aleatória de peças.
-pieces = []
 sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o}} # peça 0 sempre é a mesma
 jogadas = {}
 nextPiece = None # sorteada
 matrizJogada = []
+pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
 
 @get('/next-piece/')
 def randomPiece():
 	global response, pieces, nextPiece, currentID, sendedPieces
 	response.content_type = 'application/json'
-
-	if (pieces.__len__() == 0):
-		pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
-	type = pieces[randint(0, pieces.__len__()-1)]
+		
+	randomValue = randint(0, pieces.__len__()-1)
+	tipo = pieces[randomValue]
+	print("Tipo:\n")
+	print(tipo)
+	print(randomValue)
+	print(pieces[randomValue])
+	# print(pieces)
 	nextPiece = {
-		'type': type, 
+		'type': tipo, 
 		'dir': DIR['UP'], 
-		'x': randint(0, nx - int (type['size'])), 
+		'x': randint(0, nx - int(tipo['size'])), 
 		'y': 0,
 		'id': currentID
 	}
@@ -59,25 +63,25 @@ def atualizaMatriz(x, y, block, value):
 	global matrizJogada
 	print (str(x) + " " + str(y) + " " + str(block) + " " + str(value))
 	
-	for i in range(3, 0, -1):
+	for i in range(3, -1, -1):
 		a = block % 16
-		block = block / 16
+		block = int(block / 16)
 		print (str(a) + " " + str(block))
 		if a >= 8:
-			matrizJogada[x + i][y] = value
+			matrizJogada[y + i][x] = value
 			a = a - 8
 		
 		if a >= 4:
-			matrizJogada[x + i][y + 1] = value
+			matrizJogada[y + i][x + 1] = value
 			a = a - 4
 			
 		if a >=2:
 			a = a-2
-			matrizJogada[x + i][y + 2] = value
+			matrizJogada[y + i][x + 2] = value
 			
 		if a >= 1:
 			a = a -1
-			matrizJogada[x + i][y + 3] = value
+			matrizJogada[y + i][x + 3] = value
 		
 	for i in matrizJogada:
 		print (i)
