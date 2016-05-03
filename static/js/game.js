@@ -220,6 +220,7 @@ function reset() {
   clearScore();
   setCurrentPiece(next);
   setNextPiece();
+  $.post('/reset/');
 }
 
 function update(idt) {
@@ -285,6 +286,7 @@ function drop() {
 }
 
 function dropPiece() {
+  console.log(blocks);
   $.post('/jogada/', current)
   eachblock(current.type, current.x, current.y, current.dir, function(x, y) {
     setBlock(x, y, current.type);
