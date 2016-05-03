@@ -27,6 +27,8 @@ pieces = []
 sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o}} # peça 0 sempre é a mesma
 jogadas = {}
 nextPiece = None # sorteada
+matrizJogada = []
+
 @get('/next-piece/')
 def randomPiece():
 	global response, pieces, nextPiece, currentID, sendedPieces
@@ -48,17 +50,111 @@ def randomPiece():
 	return json.dumps(nextPiece)
 
 
+@get('/matriz')
+def printMatriz():
+	global matrizJogada
+	return {'matrizJogada': matrizJogada}
+	
+def atualizaMatriz(x, y, block, value):
+	global matrizJogada
+
+	a = block % 16
+	block = block / 16
+	for i in range(3, 0):
+		a = block % 16
+		block = block / 16
+		
+		if a >= 8:
+			matrizJogada[x + i][y] = value
+			a = a - 8
+		
+		if a >= 4:
+			matrizJogada[x + i][y + 1] = value
+			a = a - 4
+			
+		if a >=2:
+			a = a-2
+			matrizJogada[x + i][y + 2] = value
+			
+		if a >= 1:
+			a = a -1
+			matrizJogada[x + i][y + 3] = value
+			
+			
 @post('/jogada/')
 def sendjogada():
 	global nextPiece, sendedPieces, jogadas
-
+	global matrizJogada
 	jogadas[int(request.forms.get('id'))] = {
 		'type': sendedPieces[int(request.forms.get('id'))]['type'],
 		'dir': int(request.forms.get('dir')),
 		'x': int(request.forms.get('x')),
 		'y': int(request.forms.get('y')),
 	}
-
+	
+	index = int(request.forms.get('id'))
+	x = jogadas[index]['x']
+	y = jogadas[index]['y']
+	Jdir = jogadas[index]['dir']
+	tipo = jogadas[index]['type']
+	
+	print ("ent")
+	if tipo == i:
+		if Jdir == 0:
+			atualizaMatriz(x, y, 0x0F00, 0)
+		elif Jdir == 1:
+			atualizaMatriz(x, y, 0x2222, 0)
+		elif Jdir == 2:
+			atualizaMatriz(x, y, 0x00F0, 0)
+		elif Jdir == 3:
+			atualizaMatriz(x, y, 0x4444, 0)
+	elif tipo == j:
+		if Jdir == 0:
+			atualizaMatriz(x, y, 0x44C0, 1)
+		elif Jdir == 1:
+			atualizaMatriz(x, y, 0x8E00, 1)
+		elif Jdir == 2:
+			atualizaMatriz(x, y, 0x6440, 1)
+		elif Jdir == 3:
+			atualizaMatriz(x, y, 0x0E20, 1)
+	elif tipo == l:
+		if Jdir == 0:
+			atualizaMatriz(x, y, 0x4460, 2)
+		elif Jdir == 1:
+			atualizaMatriz(x, y, 0x0E80, 2)
+		elif Jdir == 2:
+			atualizaMatriz(x, y, 0xC440, 2)
+		elif Jdir == 3:
+			atualizaMatriz(x, y, 0x2E00, 2)
+	elif tipo == o:
+		atualizaMatriz(x, y, 0xCC00, 3)
+	elif tipo == s:
+		if Jdir == 0:
+			atualizaMatriz(x, y, 0x06C0, 4)
+		elif Jdir == 1:
+			atualizaMatriz(x, y, 0x8C40, 4)
+		elif Jdir == 2:
+			atualizaMatriz(x, y, 0x6C00, 4)
+		elif Jdir == 3:
+			atualizaMatriz(x, y, 0x4620, 4)
+	elif tipo == t:
+		if Jdir == 0:
+			atualizaMatriz(x, y, 0x0E40, 5)
+		elif Jdir == 1:
+			atualizaMatriz(x, y, 0x4C40, 5)
+		elif Jdir == 2:
+			atualizaMatriz(x, y, 0x4E00, 5)
+		elif Jdir == 3:
+			atualizaMatriz(x, y, 0x4640, 5)
+	elif tipo == z:
+		if Jdir == 0:
+			atualizaMatriz(x, y, 0x0C60, 6)
+		elif Jdir == 1:
+			atualizaMatriz(x, y, 0x4C80, 6)
+		elif Jdir == 2:
+			atualizaMatriz(x, y, 0xC600, 6)
+		elif Jdir == 3:
+			atualizaMatriz(x, y, 0x2640, 6)
 
 @get('/jogada/')
 @view('jogada')
@@ -77,5 +173,10 @@ def index():
 def send_static(path):
 	return static_file(path, root='static')
 
+for i in range(0, nx):
+	linha = []
+	for j in range(0, ny):
+		linha.append(-1)
+	matrizJogada.append(linha)
 
 run(host='localhost', port=8000)
