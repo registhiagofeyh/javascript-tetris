@@ -76,16 +76,27 @@ def printMatriz():
 	return {'matrizJogada': matrizJogada}
 
 
+'''@get('/newPiece')
+def newPice():
+	global matrizJogada
+	somatot = 
+	for ii in range(nx):
+		soma = 0
+		for jj in range(ny):
+			soma+=matrizJogada[ii][jj]*(7**jj)
+'''
+		
+
 def rmLine( n ):
 	global matrizJogada
 	print ("Linha removida: " + str(n))
 	for ii in range(n, -1, -1):
 		linha = []
-		for j in range(0, nx):
+		for jj in range(0, nx):
 			if ii == 0:
 				linha.append(-1)
 			else:
-				linha.append(matrizJogada[ii-1][j])
+				linha.append(matrizJogada[ii-1][jj])
 		matrizJogada[ii] = 	linha
 
 
@@ -93,8 +104,8 @@ def lineisFull(ii):
 	global matrizJogada
 	isFull = 0
 	print (ii)
-	for j in range(nx):
-		if matrizJogada[ii][j]== -1:
+	for jj in range(nx):
+		if matrizJogada[ii][jj]== -1:
 			return False
 	
 	return True
@@ -245,7 +256,7 @@ def send_static(path):
 
 for ii in range(0, ny):
 	linha = []
-	for j in range(0, nx):
+	for jj in range(0, nx):
 		linha.append(-1)
 	matrizJogada.append(linha)
 
