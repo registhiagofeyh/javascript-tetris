@@ -57,9 +57,10 @@ def printMatriz():
 	
 def atualizaMatriz(x, y, block, value):
 	global matrizJogada
-
-	a = block % 16
-	block = block / 16
+	print (str(x) + " " + str(y) + " " + str(block))
+	#a = block % 16
+	#block = block / 16
+	
 	for i in range(3, 0):
 		a = block % 16
 		block = block / 16
