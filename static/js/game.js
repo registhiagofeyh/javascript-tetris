@@ -45,6 +45,7 @@ var dx, dy,        // pixel size of a single tetris block
     blocks,        // 2 dimensional array (nx*ny) representing tetris court - either empty block or occupied by a 'piece'
     actions,       // queue of user actions (inputs)
     playing,       // true|false - game is in progress
+    pause,         // true|false - game is in progress, waiting for server decision
     dt,            // time since starting this game
     current,       // the current piece
     next,          // the next piece
@@ -137,11 +138,14 @@ function run() {
 
   var last = now = timestamp();
   function frame() {
-    now = timestamp();
-    update(Math.min(1, (now - last) / 1000.0)); // using requestAnimationFrame have to be able to handle large delta's caused when it 'hibernates' in a background or non-visible tab
-    draw();
-    stats.update();
-    last = now;
+    if (!pause) {
+      now = timestamp();
+      update(Math.min(1, (now - last) / 1000.0)); // using requestAnimationFrame have to be able to handle large delta's caused when it 'hibernates' in a background or non-visible tab
+      draw();
+      stats.update();
+      last = now;
+    }
+
     requestAnimationFrame(frame, canvas);
   }
 
@@ -174,7 +178,7 @@ function resize(event) {
 
 function keydown(ev) {
   var handled = false;
-  if (playing) {
+  if (playing && !pause) {
     switch(ev.keyCode) {
       case KEY.LEFT:   actions.push(DIR.LEFT);  handled = true; break;
       case KEY.RIGHT:  actions.push(DIR.RIGHT); handled = true; break;
@@ -182,6 +186,9 @@ function keydown(ev) {
       case KEY.DOWN:   actions.push(DIR.DOWN);  handled = true; break;
       case KEY.ESC:    lose();                  handled = true; break;
     }
+  }
+  else if (pause) { // temporário, depois o servidor que "despausa"
+    if (ev.keyCode == KEY.SPACE) {pause = false; handled = true;}
   }
   else if (ev.keyCode == KEY.SPACE) {
     play();
@@ -195,8 +202,8 @@ function keydown(ev) {
 // GAME LOGIC
 //-------------------------------------------------------------------------
 
-function play() { hide('start'); reset();          playing = true;  }
-function lose() { show('start'); setVisualScore(); playing = false; }
+function play() { hide('start'); reset();          playing = true;  pause = false;  }
+function lose() { show('start'); setVisualScore(); playing = false; pause = false; }
 
 function setVisualScore(n)      { vscore = n || score; invalidateScore(); }
 function setScore(n)            { score = n; setVisualScore(n);  }
@@ -286,6 +293,10 @@ function drop() {
 }
 
 function dropPiece() {
+<<<<<<< HEAD
+=======
+  pause = true;
+>>>>>>> 7df9254f35ee58dfe53ec98635cd43be75cab7ce
   $.post('/jogada/', current)
   eachblock(current.type, current.x, current.y, current.dir, function(x, y) {
     setBlock(x, y, current.type);
