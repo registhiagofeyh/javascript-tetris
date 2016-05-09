@@ -155,7 +155,17 @@ def atualizaMatriz(x, y, block, value):
 	someLineIsFull()
 	for ii in matrizJogada:
 		print (ii)
+
+
+@post('/matriz/')
+def seeMatriz():
+	return None
+	#ls = request.forms.get('block')
+	#k = request.forms.get('n')
+	#print ("BlaBla " + str (ls) + " " + str(k))
+	#print (json.loads(request.forms.get('blocks')))
 	
+
 @post('/jogada/')
 def sendjogada():
 	global nextPiece, sendedPieces, jogadas, i, j, l, o, s, t, z, matrizJogada

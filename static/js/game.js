@@ -298,6 +298,7 @@ function dropPiece() {
   eachblock(current.type, current.x, current.y, current.dir, function(x, y) {
     setBlock(x, y, current.type);
   }); console.log(blocks);
+  $.post('/matriz/', {block: blocks, n:1});
 }
 
 function removeLines() {
