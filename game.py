@@ -76,16 +76,20 @@ def printMatriz():
 	return {'matrizJogada': matrizJogada}
 
 
-'''@get('/newPiece')
+
+
+
+@get('/newPiece')
 def newPice():
 	global matrizJogada
-	somatot = 
-	for ii in range(nx):
+	somatot = 0
+	for ii in range(ny):
 		soma = 0
-		for jj in range(ny):
-			soma+=matrizJogada[ii][jj]*(7**jj)
-'''
-		
+		for jj in range(nx):
+			if matrizJogada[ii][jj] != -1:
+				soma+=matrizJogada[ii][jj]*(jj + 1)
+		somatot = soma*(ii + 1)
+	return somatot % 7
 
 def rmLine( n ):
 	global matrizJogada
@@ -145,7 +149,7 @@ def atualizaMatriz(x, y, block, value):
 	someLineIsFull()
 	for ii in matrizJogada:
 		print (ii)
-			
+	
 @post('/jogada/')
 def sendjogada():
 	global nextPiece, sendedPieces, jogadas, i, j, l, o, s, t, z, matrizJogada
