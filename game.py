@@ -53,30 +53,39 @@ def randomPiece():
 
 	return json.dumps(nextPiece)
 
-
-'''@post('/rmLine')
-def rmLine():
-	n = request.forms.get('n')
-
-	for i in range(0, n):
-		linha = []
-		if i == 0:
-			linha.append(-1)
-		else:
-			for j in range(0, nx):
-				linha.append(-1)
-	matrizJogada.append(linha)
-
-	return {}
-'''
-
 @get('/matriz')
 def printMatriz():
 	global matrizJogada
 	return {'matrizJogada': matrizJogada}
 
-
-
+@get('/matrizToJs')
+def returnMatriz():
+	global matrizJogada, i, j, l, o, s, t, z
+	l = []
+	
+	for jj in range(nx):
+		nl = []
+		for ii in range(ny):
+			element = None
+			mn = matrizJogada[ii][jj] 
+			if mn == 0:
+				element = i
+			elif mn == 1:
+				element = j
+			elif mn == 2:
+				element = l
+			elif mn == 3:
+				element = o
+			elif mn == 4:
+				element = s
+			elif mn == 5:
+				element = t
+			elif mn == 6:
+				element = z
+			nl.append(element)
+		l.append(nl)
+		
+	return json.dumps(l)
 
 
 @get('/newPiece')
@@ -93,7 +102,7 @@ def newPice():
 
 def rmLine( n ):
 	global matrizJogada
-	print ("Linha removida: " + str(n))
+#	print ("Linha removida: " + str(n))
 	for ii in range(n, -1, -1):
 		linha = []
 		for jj in range(0, nx):
@@ -102,7 +111,6 @@ def rmLine( n ):
 			else:
 				linha.append(matrizJogada[ii-1][jj])
 		matrizJogada[ii] = 	linha
-
 
 def lineisFull(ii):
 	global matrizJogada
@@ -119,8 +127,6 @@ def someLineIsFull():
 	for ii in range(ny - 1, -1, -1):
 		while lineisFull(ii) == True:
 			rmLine(ii)
-	
-		
 	
 def atualizaMatriz(x, y, block, value):
 	global matrizJogada
