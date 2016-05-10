@@ -187,9 +187,9 @@ function keydown(ev) {
       case KEY.ESC:    lose();                  handled = true; break;
     }
   }
-  else if (pause) { // temporário, depois o servidor que "despausa"
+  /*else if (pause) { // temporário, depois o servidor que "despausa"
     if (ev.keyCode == KEY.SPACE) {pause = false; handled = true;}
-  }
+  }*/
   else if (ev.keyCode == KEY.SPACE) {
     play();
     handled = true;
@@ -297,8 +297,21 @@ function dropPiece() {
   $.post('/jogada/', current)
   eachblock(current.type, current.x, current.y, current.dir, function(x, y) {
     setBlock(x, y, current.type);
-  }); console.log(blocks);
+  });
   $.post('/matriz/', {blocks: JSON.stringify(blocks)});
+  getUpdatedBlocks();
+}
+
+function getUpdatedBlocks() {
+  $.get('/matrizToJs', function(response) {
+    if (response.ready) {
+      console.log(blocks)
+      console.log(response.blocks)
+      blocks = response.blocks;
+      pause = false;
+    }
+    else getUpdatedBlocks();
+  }, 'json');
 }
 
 function removeLines() {

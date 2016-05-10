@@ -2,6 +2,7 @@ from bottle import run, get, post, view, request, redirect, route, static_file, 
 import sys
 import threading
 import json
+import copy
 from random import randint
 
 # Game constants
@@ -61,6 +62,7 @@ def printMatriz():
 @get('/matrizToJs')
 def returnMatriz():
 	global matrizJogada, i, j, l, o, s, t, z
+	response.content_type = 'application/json'
 	l = []
 	
 	for jj in range(nx):
@@ -69,23 +71,24 @@ def returnMatriz():
 			element = None
 			mn = matrizJogada[ii][jj] 
 			if mn == 0:
-				element = i
+				element = copy.copy(i)
 			elif mn == 1:
-				element = j
+				element = copy.copy(j)
 			elif mn == 2:
-				element = l
+				element = copy.copy(l)
 			elif mn == 3:
-				element = o
+				element = copy.copy(o)
 			elif mn == 4:
-				element = s
+				element = copy.copy(s)
 			elif mn == 5:
-				element = t
+				element = copy.copy(t)
 			elif mn == 6:
-				element = z
+				element = copy.copy(z)
+			if element is not None:
+				element['color'] = 'silver'
 			nl.append(element)
 		l.append(nl)
-		
-	return json.dumps(l)
+	return json.dumps({'ready': True, 'blocks': l})
 
 
 @get('/newPiece')
