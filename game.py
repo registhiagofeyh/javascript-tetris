@@ -159,11 +159,13 @@ def atualizaMatriz(x, y, block, value):
 
 @post('/matriz/')
 def seeMatriz():
-	return None
 	#ls = request.forms.get('block')
 	#k = request.forms.get('n')
 	#print ("BlaBla " + str (ls) + " " + str(k))
-	#print (json.loads(request.forms.get('blocks')))
+	print("Matriz da jogada recebida:\n-----------")
+	print(json.loads(request.forms.get('blocks')))
+	print("------------------")
+	return None
 	
 
 @post('/jogada/')
