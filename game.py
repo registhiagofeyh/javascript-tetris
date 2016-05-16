@@ -3,6 +3,7 @@ import sys
 import threading
 import json
 import copy
+from matriz import Matriz
 from random import randint
 from constants import i, j, l, o, s, t, z, KEY, DIR, speed, nx, ny, nu, pieces
 
@@ -11,15 +12,16 @@ currentID = 1
 sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o}} # peça 0 sempre é a mesma
 jogadas = {}
 nextPiece = None
-matrizJogada = []
+gameMatriz = Matriz()
 
 
 @get('/next-piece/')
 def setNextPiece():
+	global gameMatriz
 	global response, nextPiece, currentID, sendedPieces
 	response.content_type = 'application/json'
 		
-	tipo = pieces[newPice()]
+	tipo = pieces[gameMatriz.hashIntValue()]
 	nextPiece = {
 		'type': tipo, 
 		'dir': DIR['UP'], 
@@ -35,118 +37,22 @@ def setNextPiece():
 
 @get('/matriz')
 def printMatriz():
-	global matrizJogada
-	return {'matrizJogada': matrizJogada}
+	global gameMatriz
+	return {'matrizJogada': gameMatriz.getMatriz()}
 
 
 @get('/matrizToJs')
 def returnMatriz():
-	global matrizJogada
+	global gameMatriz
 	response.content_type = 'application/json'
-	ll = []
-	
-	for jj in range(nx):
-		nl = []
-		for ii in range(ny):
-			element = None
-			mn = matrizJogada[ii][jj] 
-			if mn == 0:
-				element = copy.copy(i)
-			elif mn == 1:
-				element = copy.copy(j)
-			elif mn == 2:
-				element = copy.copy(l)
-			elif mn == 3:
-				element = copy.copy(o)
-			elif mn == 4:
-				element = copy.copy(s)
-			elif mn == 5:
-				element = copy.copy(t)
-			elif mn == 6:
-				element = copy.copy(z)
-			if element is not None:
-				element['color'] = 'silver'
-			nl.append(element)
-		ll.append(nl)
-	return json.dumps({'ready': True, 'blocks': ll})
 
-
-def newPice():
-	global matrizJogada
-	somatot = 0
-	for ii in range(ny):
-		soma = 0
-		for jj in range(nx):
-			if matrizJogada[ii][jj] != -1:
-				soma += matrizJogada[ii][jj]*(jj + 1)
-		somatot = soma*(ii + 1)
-	return somatot % 7
-
-
-def rmLine(n):
-	global matrizJogada
-
-	for ii in range(n, -1, -1):
-		linha = []
-		for jj in range(0, nx):
-			if ii == 0:
-				linha.append(-1)
-			else:
-				linha.append(matrizJogada[ii-1][jj])
-		matrizJogada[ii] = 	linha
-
-
-def lineisFull(ii):
-	global matrizJogada
-
-	isFull = 0
-	for jj in range(nx):
-		if matrizJogada[ii][jj]== -1:
-			return False
-	
-	return True
-	
-
-
-def someLineIsFull():
-	global matrizJogada
-	for ii in range(ny - 1, -1, -1):
-		while lineisFull(ii) == True:
-			rmLine(ii)
-	
-
-def atualizaMatriz(x, y, block, value):
-	global matrizJogada
-	
-	for ii in range(3, -1, -1):
-		a = block % 16
-		block = int(block / 16)
-		print (str(a) + " " + str(block))
-		if a >= 8:
-			matrizJogada[y + ii][x] = value
-			a = a - 8
-		
-		if a >= 4:
-			matrizJogada[y + ii][x + 1] = value
-			a = a - 4
-			
-		if a >=2:
-			a = a-2
-			matrizJogada[y + ii][x + 2] = value
-			
-		if a >= 1:
-			a = a -1
-			matrizJogada[y + ii][x + 3] = value
-	
-	someLineIsFull()
-	for ii in matrizJogada:
-		print (ii)
-
+	return json.dumps({'ready': True, 'blocks': gameMatriz.prepareToJS()})
 	
 
 @post('/jogada/')
 def sendjogada():
-	global nextPiece, sendedPieces, jogadas, matrizJogada
+	global gameMatriz
+	global nextPiece, sendedPieces, jogadas
 	jogadas[int(request.forms.get('id'))] = {
 		'type': sendedPieces[int(request.forms.get('id'))]['type'],
 		'dir': int(request.forms.get('dir')),
@@ -164,60 +70,60 @@ def sendjogada():
 	print (i)
 	if tipo == i:
 		if Jdir == 0:
-			atualizaMatriz(x, y, 0x0F00, 0)
+			gameMatriz.updateMatrix(x, y, 0x0F00, 0)
 		elif Jdir == 1:
-			atualizaMatriz(x, y, 0x2222, 0)
+			gameMatriz.updateMatrix(x, y, 0x2222, 0)
 		elif Jdir == 2:
-			atualizaMatriz(x, y, 0x00F0, 0)
+			gameMatriz.updateMatrix(x, y, 0x00F0, 0)
 		elif Jdir == 3:
-			atualizaMatriz(x, y, 0x4444, 0)
+			gameMatriz.updateMatrix(x, y, 0x4444, 0)
 	elif tipo == j:
 		if Jdir == 0:
-			atualizaMatriz(x, y, 0x44C0, 1)
+			gameMatriz.updateMatrix(x, y, 0x44C0, 1)
 		elif Jdir == 1:
-			atualizaMatriz(x, y, 0x8E00, 1)
+			gameMatriz.updateMatrix(x, y, 0x8E00, 1)
 		elif Jdir == 2:
-			atualizaMatriz(x, y, 0x6440, 1)
+			gameMatriz.updateMatrix(x, y, 0x6440, 1)
 		elif Jdir == 3:
-			atualizaMatriz(x, y, 0x0E20, 1)
+			gameMatriz.updateMatrix(x, y, 0x0E20, 1)
 	elif tipo == l:
 		if Jdir == 0:
-			atualizaMatriz(x, y, 0x4460, 2)
+			gameMatriz.updateMatrix(x, y, 0x4460, 2)
 		elif Jdir == 1:
-			atualizaMatriz(x, y, 0x0E80, 2)
+			gameMatriz.updateMatrix(x, y, 0x0E80, 2)
 		elif Jdir == 2:
-			atualizaMatriz(x, y, 0xC440, 2)
+			gameMatriz.updateMatrix(x, y, 0xC440, 2)
 		elif Jdir == 3:
-			atualizaMatriz(x, y, 0x2E00, 2)
+			gameMatriz.updateMatrix(x, y, 0x2E00, 2)
 	elif tipo == o:
-		atualizaMatriz(x, y, 0xCC00, 3)
+		gameMatriz.updateMatrix(x, y, 0xCC00, 3)
 	elif tipo == s:
 		if Jdir == 0:
-			atualizaMatriz(x, y, 0x06C0, 4)
+			gameMatriz.updateMatrix(x, y, 0x06C0, 4)
 		elif Jdir == 1:
-			atualizaMatriz(x, y, 0x8C40, 4)
+			gameMatriz.updateMatrix(x, y, 0x8C40, 4)
 		elif Jdir == 2:
-			atualizaMatriz(x, y, 0x6C00, 4)
+			gameMatriz.updateMatrix(x, y, 0x6C00, 4)
 		elif Jdir == 3:
-			atualizaMatriz(x, y, 0x4620, 4)
+			gameMatriz.updateMatrix(x, y, 0x4620, 4)
 	elif tipo == t:
 		if Jdir == 0:
-			atualizaMatriz(x, y, 0x0E40, 5)
+			gameMatriz.updateMatrix(x, y, 0x0E40, 5)
 		elif Jdir == 1:
-			atualizaMatriz(x, y, 0x4C40, 5)
+			gameMatriz.updateMatrix(x, y, 0x4C40, 5)
 		elif Jdir == 2:
-			atualizaMatriz(x, y, 0x4E00, 5)
+			gameMatriz.updateMatrix(x, y, 0x4E00, 5)
 		elif Jdir == 3:
-			atualizaMatriz(x, y, 0x4640, 5)
+			gameMatriz.updateMatrix(x, y, 0x4640, 5)
 	elif tipo == z:
 		if Jdir == 0:
-			atualizaMatriz(x, y, 0x0C60, 6)
+			gameMatriz.updateMatrix(x, y, 0x0C60, 6)
 		elif Jdir == 1:
-			atualizaMatriz(x, y, 0x4C80, 6)
+			gameMatriz.updateMatrix(x, y, 0x4C80, 6)
 		elif Jdir == 2:
-			atualizaMatriz(x, y, 0xC600, 6)
+			gameMatriz.updateMatrix(x, y, 0xC600, 6)
 		elif Jdir == 3:
-			atualizaMatriz(x, y, 0x2640, 6)
+			gameMatriz.updateMatrix(x, y, 0x2640, 6)
 
 
 
@@ -254,11 +160,5 @@ def index():
 def send_static(path):
 	return static_file(path, root='static')
 
-
-for ii in range(0, ny):
-	linha = []
-	for jj in range(0, nx):
-		linha.append(-1)
-	matrizJogada.append(linha)
 
 run(host='localhost', port=8000)
