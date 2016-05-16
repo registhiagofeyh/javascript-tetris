@@ -302,7 +302,9 @@ function dropPiece() {
   getUpdatedBlocks();
 }
 
+var syncInterval = null;
 function getUpdatedBlocks() {
+  if (syncInterval) clearInterval(syncInterval);
   $.get('/matrizToJs', function(response) {
     if (response.ready) {
       console.log(blocks)
@@ -310,7 +312,7 @@ function getUpdatedBlocks() {
       blocks = response.blocks;
       pause = false;
     }
-    else getUpdatedBlocks();
+    else syncInterval = setInterval(getUpdatedBlocks, 1000);
   }, 'json');
 }
 
