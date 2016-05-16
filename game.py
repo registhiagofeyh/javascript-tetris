@@ -7,10 +7,10 @@ from random import randint
 from constants import i, j, l, o, s, t, z, KEY, DIR, speed, nx, ny, nu, pieces
 
 currentID = 1
-# Seleção aleatória de peças.
+# Seleção de peças.
 sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o}} # peça 0 sempre é a mesma
 jogadas = {}
-nextPiece = None # sorteada
+nextPiece = None
 matrizJogada = []
 
 
@@ -32,10 +32,12 @@ def setNextPiece():
 
 	return json.dumps(nextPiece)
 
+
 @get('/matriz')
 def printMatriz():
 	global matrizJogada
 	return {'matrizJogada': matrizJogada}
+
 
 @get('/matrizToJs')
 def returnMatriz():
@@ -76,13 +78,14 @@ def newPice():
 		soma = 0
 		for jj in range(nx):
 			if matrizJogada[ii][jj] != -1:
-				soma+=matrizJogada[ii][jj]*(jj + 1)
+				soma += matrizJogada[ii][jj]*(jj + 1)
 		somatot = soma*(ii + 1)
 	return somatot % 7
 
-def rmLine( n ):
+
+def rmLine(n):
 	global matrizJogada
-#	print ("Linha removida: " + str(n))
+
 	for ii in range(n, -1, -1):
 		linha = []
 		for jj in range(0, nx):
@@ -92,25 +95,28 @@ def rmLine( n ):
 				linha.append(matrizJogada[ii-1][jj])
 		matrizJogada[ii] = 	linha
 
+
 def lineisFull(ii):
 	global matrizJogada
+
 	isFull = 0
-	print (ii)
 	for jj in range(nx):
 		if matrizJogada[ii][jj]== -1:
 			return False
 	
 	return True
 	
+
+
 def someLineIsFull():
 	global matrizJogada
 	for ii in range(ny - 1, -1, -1):
 		while lineisFull(ii) == True:
 			rmLine(ii)
 	
+
 def atualizaMatriz(x, y, block, value):
 	global matrizJogada
-	print (str(x) + " " + str(y) + " " + str(block) + " " + str(value))
 	
 	for ii in range(3, -1, -1):
 		a = block % 16
@@ -136,16 +142,6 @@ def atualizaMatriz(x, y, block, value):
 	for ii in matrizJogada:
 		print (ii)
 
-
-@post('/matriz/')
-def seeMatriz():
-	#ls = request.forms.get('block')
-	#k = request.forms.get('n')
-	#print ("BlaBla " + str (ls) + " " + str(k))
-	print("Matriz da jogada recebida:\n-----------")
-	print(json.loads(request.forms.get('blocks')))
-	print("------------------")
-	return None
 	
 
 @post('/jogada/')
@@ -223,6 +219,8 @@ def sendjogada():
 		elif Jdir == 3:
 			atualizaMatriz(x, y, 0x2640, 6)
 
+
+
 @get('/jogada/')
 @view('jogada')
 def getjogada():
@@ -255,6 +253,7 @@ def index():
 @route('/static/<path:path>')
 def send_static(path):
 	return static_file(path, root='static')
+
 
 for ii in range(0, ny):
 	linha = []
