@@ -298,7 +298,6 @@ function dropPiece() {
   eachblock(current.type, current.x, current.y, current.dir, function(x, y) {
     setBlock(x, y, current.type);
   });
-  $.post('/matriz/', {blocks: JSON.stringify(blocks)});
   getUpdatedBlocks();
 }
 
