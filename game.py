@@ -63,7 +63,7 @@ def printMatriz():
 def returnMatriz():
 	global matrizJogada, i, j, l, o, s, t, z
 	response.content_type = 'application/json'
-	l = []
+	ll = []
 	
 	for jj in range(nx):
 		nl = []
@@ -87,8 +87,8 @@ def returnMatriz():
 			if element is not None:
 				element['color'] = 'silver'
 			nl.append(element)
-		l.append(nl)
-	return json.dumps({'ready': True, 'blocks': l})
+		ll.append(nl)
+	return json.dumps({'ready': True, 'blocks': ll})
 
 
 @get('/newPiece')
