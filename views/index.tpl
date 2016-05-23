@@ -23,7 +23,18 @@
   <script src="/static/js/stats.js"></script>
   <script src="/static/js/game.js"></script>
   <script>
-    run();
+  var runInterval = null;
+  function runGame() {
+    getUpdatedBlocks();
+    if (runInterval) clearInterval(runInterval);
+    if (BlocksUpdated) {
+      run();
+    } else {
+      runInterval = setInterval(runGame, 1000);
+    }
+  }
+
+    runGame();
   </script>
 
 </body>

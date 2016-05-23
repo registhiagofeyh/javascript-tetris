@@ -135,6 +135,7 @@ function run() {
 
   showStats(); // initialize FPS counter
   addEvents(); // attach keydown and resize events
+  syncBlocks();
 
   var last = now = timestamp();
   function frame() {
@@ -302,16 +303,28 @@ function dropPiece() {
 }
 
 var syncInterval = null;
+var BlocksUpdated = false;
 function getUpdatedBlocks() {
   if (syncInterval) clearInterval(syncInterval);
   $.get('/matrizToJs', function(response) {
     if (response.ready) {
+      BlocksUpdated = true;
       console.log(blocks)
       console.log(response.blocks)
       blocks = response.blocks;
       pause = false;
+      if (!playing) play();
     }
     else syncInterval = setInterval(getUpdatedBlocks, 1000);
+  }, 'json');
+}
+
+var autoSyncBlocksInterval = null;
+function syncBlocks() {
+  if (autoSyncBlocksInterval) clearInterval(autoSyncBlocksInterval);
+  $.get('/matrizToJs', function(response) {
+    if (response.ready) blocks = response.blocks;
+    autoSyncBlocksInterval = setInterval(syncBlocks, 1000);
   }, 'json');
 }
 
