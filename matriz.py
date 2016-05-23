@@ -49,9 +49,8 @@ class Matriz:
 		for ii in range(ny):
 			soma = 0
 			for jj in range(nx):
-				if self.matrizJogada[ii][jj] != -1:
-					soma += self.matrizJogada[ii][jj]*(jj + 1)
-			somatot = soma*(ii + 1)
+				soma += self.matrizJogada[ii][jj]*(jj + 1)
+			somatot += soma*(ii + 1)
 		return somatot % 7
 
 
