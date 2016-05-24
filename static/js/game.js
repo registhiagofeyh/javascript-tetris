@@ -117,9 +117,8 @@ function unoccupied(type, x, y, dir) {
 // pick randomly until the 'bag is empty'
 //-----------------------------------------
 var pieces = [];
-// primeira peça sempre é essa, depois busca as próximas do servidor
 var rand = {y: 0, dir: 0, x: 7, type: o, id: 0};
-function randomPiece() {
+function getNextPiece() {
   curID = (typeof current != 'undefined') ? current.id : -1;
   $.post('/next-piece/', {'curID': curID}, function(response) {
     rand = response;
@@ -127,7 +126,7 @@ function randomPiece() {
   }, 'json');
   return rand;
 }
-randomPiece();
+getNextPiece();
 
 
 //-------------------------------------------------------------------------
@@ -219,8 +218,8 @@ function getBlock(x,y)          { return (blocks && blocks[x] ? blocks[x][y] : n
 function setBlock(x,y,type)     { blocks[x] = blocks[x] || []; blocks[x][y] = type; invalidate(); }
 function clearBlocks()          { blocks = []; invalidate(); }
 function clearActions()         { actions = []; }
-function setCurrentPiece(piece) { current = next; invalidate();     }
-function setNextPiece(piece)    { next    = piece || randomPiece(); invalidateNext(); }
+function setCurrentPiece(piece) { current = next; invalidate(); loadingNext();     }
+function setNextPiece(piece)    { next    = piece || getNextPiece(); invalidateNext(); }
 
 function reset() {
   dt = 0;
@@ -286,7 +285,6 @@ function drop() {
     dropPiece();
     removeLines();
     setCurrentPiece(next);
-    setNextPiece(randomPiece());
     clearActions();
     if (occupied(current.type, current.x, current.y, current.dir)) {
       lose();
@@ -324,7 +322,7 @@ function syncBlocks() {
   $.get('/matrizToJs' ,function(response) {
     if (!endgame) {
       if (response.ready) blocks = response.blocks;
-      setNextPiece(randomPiece());
+      setNextPiece(getNextPiece());
       autoSyncBlocksInterval = setInterval(syncBlocks, 1000);
     } else {
       clearInterval(autoSyncBlocksInterval);
@@ -410,6 +408,15 @@ function drawNext() {
     uctx.restore();
     invalid.next = false;
   }
+}
+
+function loadingNext() {
+  uctx.save();
+  uctx.translate(0.5, 0.5);
+  uctx.clearRect(0, 0, nu*dx, nu*dy);
+  uctx.strokeStyle = 'black';
+  uctx.strokeRect(0, 0, nu*dx - 1, nu*dy - 1);
+  uctx.restore();
 }
 
 function drawScore() {
