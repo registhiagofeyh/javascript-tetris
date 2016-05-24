@@ -14,11 +14,14 @@ jogadas = {}
 nextPiece = None
 gameMatriz = Matriz()
 
-@post('/next-piece/')
+
+# Atualmente está gerando um novo ID cada requisição do /matrizToJs, necessário verificar isso
+# ainda não sei qual a melhor solução. Talvez verificando se houve um registro da jogada
+# desde a última requisição. Seto uma flag e reseto no registro da jogada. Se a flag estiver
+# ligada dou a última peça ao invés de gerar uma nova. Olha só, escrevendo encontrei uma solução,
+# mas não vou fazer isso agora. flw. vlw.
 def setNextPiece():
-	global gameMatriz
-	global response, nextPiece, currentID, sendedPieces
-	response.content_type = 'application/json'
+	global gameMatriz, response, nextPiece, currentID, sendedPieces
 	
 	tipo = pieces[gameMatriz.hashIntValue()]
 	nextPiece = {
@@ -32,23 +35,16 @@ def setNextPiece():
 	sendedPieces[currentID] = nextPiece
 	currentID += 1
 	
-	return json.dumps(nextPiece)
-
-
-
-
-@get('/matriz')
-def printMatriz():
-	global gameMatriz
-	return {'matrizJogada': gameMatriz.getMatriz()}
+	return nextPiece
 
 
 @get('/matrizToJs')
 def returnMatriz():
 	global gameMatriz
+	
 	response.content_type = 'application/json'
 
-	return json.dumps({'ready': True, 'blocks': gameMatriz.prepareToJS()})
+	return json.dumps({'ready': True, 'blocks': gameMatriz.prepareToJS(), 'nextpiece': setNextPiece()})
 	
 
 @post('/jogada/')

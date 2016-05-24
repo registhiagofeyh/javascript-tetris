@@ -118,15 +118,8 @@ function unoccupied(type, x, y, dir) {
 //-----------------------------------------
 var pieces = [];
 var rand = {y: 0, dir: 0, x: 7, type: o, id: 0};
-function getNextPiece() {
-  curID = (typeof current != 'undefined') ? current.id : -1;
-  $.post('/next-piece/', {'curID': curID}, function(response) {
-    rand = response;
-    drawNext();
-  }, 'json');
-  return rand;
-}
-getNextPiece();
+
+function getNextPiece() { return rand;}
 
 
 //-------------------------------------------------------------------------
@@ -218,7 +211,7 @@ function getBlock(x,y)          { return (blocks && blocks[x] ? blocks[x][y] : n
 function setBlock(x,y,type)     { blocks[x] = blocks[x] || []; blocks[x][y] = type; invalidate(); }
 function clearBlocks()          { blocks = []; invalidate(); }
 function clearActions()         { actions = []; }
-function setCurrentPiece(piece) { current = next; invalidate(); loadingNext();     }
+function setCurrentPiece(piece) { current = next; invalidate(); }
 function setNextPiece(piece)    { next    = piece || getNextPiece(); invalidateNext(); }
 
 function reset() {
@@ -312,7 +305,11 @@ function getUpdatedBlocks() {
       pause = false;
       if (!playing) play();
     }
-    else if (!endgame) syncInterval = setInterval(getUpdatedBlocks, 1000);
+    else if (!endgame) 
+      syncInterval = setInterval(getUpdatedBlocks, 1000);
+    
+    setNextPiece(response.nextpiece);
+    drawNext();
   }, 'json');
 }
 
@@ -322,7 +319,6 @@ function syncBlocks() {
   $.get('/matrizToJs' ,function(response) {
     if (!endgame) {
       if (response.ready) blocks = response.blocks;
-      setNextPiece(getNextPiece());
       autoSyncBlocksInterval = setInterval(syncBlocks, 1000);
     } else {
       clearInterval(autoSyncBlocksInterval);
@@ -408,15 +404,6 @@ function drawNext() {
     uctx.restore();
     invalid.next = false;
   }
-}
-
-function loadingNext() {
-  uctx.save();
-  uctx.translate(0.5, 0.5);
-  uctx.clearRect(0, 0, nu*dx, nu*dy);
-  uctx.strokeStyle = 'black';
-  uctx.strokeRect(0, 0, nu*dx - 1, nu*dy - 1);
-  uctx.restore();
 }
 
 function drawScore() {
