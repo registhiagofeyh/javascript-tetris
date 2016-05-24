@@ -15,6 +15,11 @@ class Matriz:
 		return self.matrizJogada
 
 
+	def reset(self):
+		self.matrizJogada = []
+		self.__init__()
+
+
 	def prepareToJS(self):
 		ll = []
 	

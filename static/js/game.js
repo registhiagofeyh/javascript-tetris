@@ -45,6 +45,7 @@ var dx, dy,        // pixel size of a single tetris block
     blocks,        // 2 dimensional array (nx*ny) representing tetris court - either empty block or occupied by a 'piece'
     actions,       // queue of user actions (inputs)
     playing,       // true|false - game is in progress
+    endgame,
     pause,         // true|false - game is in progress, waiting for server decision
     dt,            // time since starting this game
     current,       // the current piece
@@ -132,7 +133,6 @@ randomPiece();
 //-------------------------------------------------------------------------
 
 function run() {
-
   showStats(); // initialize FPS counter
   addEvents(); // attach keydown and resize events
   syncBlocks();
@@ -203,8 +203,8 @@ function keydown(ev) {
 // GAME LOGIC
 //-------------------------------------------------------------------------
 
-function play() { hide('start'); reset();          playing = true;  pause = false;  }
-function lose() { show('start'); setVisualScore(); playing = false; pause = false; }
+function play() { hide('start'); reset(); playing = true;  pause = false; endgame = false; syncBlocks();}
+function lose() { console.log('LOSE!'); show('start'); setVisualScore(); playing = false; pause = false; endgame = true; $.get('/reset/');}
 
 function setVisualScore(n)      { vscore = n || score; invalidateScore(); }
 function setScore(n)            { score = n; setVisualScore(n);  }
@@ -228,7 +228,7 @@ function reset() {
   clearScore();
   setCurrentPiece(next);
   setNextPiece();
-  $.post('/reset/');
+  $.get('/reset/');
 }
 
 function update(idt) {
@@ -307,7 +307,8 @@ var BlocksUpdated = false;
 function getUpdatedBlocks() {
   if (syncInterval) clearInterval(syncInterval);
   $.get('/matrizToJs', function(response) {
-    if (response.ready) {
+    console.log('matrizToJs return')
+    if (!endgame && response.ready) {
       BlocksUpdated = true;
       console.log(blocks)
       console.log(response.blocks)
@@ -315,7 +316,7 @@ function getUpdatedBlocks() {
       pause = false;
       if (!playing) play();
     }
-    else syncInterval = setInterval(getUpdatedBlocks, 1000);
+    else if (!endgame) syncInterval = setInterval(getUpdatedBlocks, 1000);
   }, 'json');
 }
 
@@ -323,8 +324,13 @@ var autoSyncBlocksInterval = null;
 function syncBlocks() {
   if (autoSyncBlocksInterval) clearInterval(autoSyncBlocksInterval);
   $.get('/matrizToJs', function(response) {
-    if (response.ready) blocks = response.blocks;
-    autoSyncBlocksInterval = setInterval(syncBlocks, 1000);
+    console.log('autosyncblocks return');
+    if (!endgame) {
+      if (response.ready) blocks = response.blocks;
+      autoSyncBlocksInterval = setInterval(syncBlocks, 1000);
+    } else {
+      clearInterval(autoSyncBlocksInterval);
+    }
   }, 'json');
 }
 
@@ -349,7 +355,6 @@ function removeLines() {
 }
 
 function removeLine(n) {
-	//$.post('/rmLine', {n: n})
 	var x, y;
 	for(y = n ; y >= 0 ; --y) {
 		for(x = 0 ; x < nx ; ++x)
