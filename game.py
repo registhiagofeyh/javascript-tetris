@@ -20,20 +20,19 @@ def setNextPiece():
 	global response, nextPiece, currentID, sendedPieces
 	response.content_type = 'application/json'
 	
-	if int(request.forms.get('curID')) <= currentID-2:	
-		tipo = pieces[gameMatriz.hashIntValue()]
-		nextPiece = {
-			'type': tipo, 
-			'dir': DIR['UP'], 
-			'x': 4,
-			'y': 0,
-			'id': currentID
-		}
+	tipo = pieces[gameMatriz.hashIntValue()]
+	nextPiece = {
+		'type': tipo, 
+		'dir': DIR['UP'], 
+		'x': 4,
+		'y': 0,
+		'id': currentID
+	}
 
-		sendedPieces[currentID] = nextPiece
-		currentID += 1
+	sendedPieces[currentID] = nextPiece
+	currentID += 1
 	
-	return json.dumps(sendedPieces[currentID-1])
+	return json.dumps(nextPiece)
 
 
 

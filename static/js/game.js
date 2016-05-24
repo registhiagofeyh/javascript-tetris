@@ -123,6 +123,7 @@ function randomPiece() {
   curID = (typeof current != 'undefined') ? current.id : -1;
   $.post('/next-piece/', {'curID': curID}, function(response) {
     rand = response;
+    drawNext();
   }, 'json');
   return rand;
 }
@@ -218,7 +219,7 @@ function getBlock(x,y)          { return (blocks && blocks[x] ? blocks[x][y] : n
 function setBlock(x,y,type)     { blocks[x] = blocks[x] || []; blocks[x][y] = type; invalidate(); }
 function clearBlocks()          { blocks = []; invalidate(); }
 function clearActions()         { actions = []; }
-function setCurrentPiece(piece) { current = piece || randomPiece(); invalidate();     }
+function setCurrentPiece(piece) { current = next; invalidate();     }
 function setNextPiece(piece)    { next    = piece || randomPiece(); invalidateNext(); }
 
 function reset() {
@@ -323,6 +324,7 @@ function syncBlocks() {
   $.get('/matrizToJs' ,function(response) {
     if (!endgame) {
       if (response.ready) blocks = response.blocks;
+      setNextPiece(randomPiece());
       autoSyncBlocksInterval = setInterval(syncBlocks, 1000);
     } else {
       clearInterval(autoSyncBlocksInterval);
@@ -374,7 +376,6 @@ function draw() {
   ctx.lineWidth = 1;
   ctx.translate(0.5, 0.5); // for crisp 1px black lines
   drawCourt();
-  drawNext();
   drawScore();
   drawRows();
   ctx.restore();
