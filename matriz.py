@@ -89,7 +89,7 @@ class Matriz:
 		for ii in range(3, -1, -1):
 			a = block % 16
 			block = int(block / 16)
-			print (str(a) + " " + str(block))
+			#print (str(a) + " " + str(block))
 			if a >= 8:
 				self.matrizJogada[y + ii][x] = value
 				a = a - 8
@@ -107,5 +107,5 @@ class Matriz:
 				self.matrizJogada[y + ii][x + 3] = value
 		
 		self.existsLineFull()
-		for ii in self.matrizJogada:
-			print (ii)
+		#for ii in self.matrizJogada:
+			#print (ii)

@@ -120,7 +120,8 @@ var pieces = [];
 // primeira peça sempre é essa, depois busca as próximas do servidor
 var rand = {y: 0, dir: 0, x: 7, type: o, id: 0};
 function randomPiece() {
-  $.get('/next-piece/', function(response) {
+  curID = (typeof current != 'undefined') ? current.id : -1;
+  $.post('/next-piece/', {'curID': curID}, function(response) {
     rand = response;
   }, 'json');
   return rand;
@@ -204,7 +205,7 @@ function keydown(ev) {
 //-------------------------------------------------------------------------
 
 function play() { hide('start'); reset(); playing = true;  pause = false; endgame = false; syncBlocks();}
-function lose() { console.log('LOSE!'); show('start'); setVisualScore(); playing = false; pause = false; endgame = true; $.get('/reset/');}
+function lose() { show('start'); setVisualScore(); playing = false; pause = false; endgame = true; $.get('/reset/');}
 
 function setVisualScore(n)      { vscore = n || score; invalidateScore(); }
 function setScore(n)            { score = n; setVisualScore(n);  }
@@ -228,7 +229,6 @@ function reset() {
   clearScore();
   setCurrentPiece(next);
   setNextPiece();
-  $.get('/reset/');
 }
 
 function update(idt) {
@@ -307,11 +307,8 @@ var BlocksUpdated = false;
 function getUpdatedBlocks() {
   if (syncInterval) clearInterval(syncInterval);
   $.get('/matrizToJs', function(response) {
-    console.log('matrizToJs return')
     if (!endgame && response.ready) {
       BlocksUpdated = true;
-      console.log(blocks)
-      console.log(response.blocks)
       blocks = response.blocks;
       pause = false;
       if (!playing) play();
@@ -323,8 +320,7 @@ function getUpdatedBlocks() {
 var autoSyncBlocksInterval = null;
 function syncBlocks() {
   if (autoSyncBlocksInterval) clearInterval(autoSyncBlocksInterval);
-  $.get('/matrizToJs', function(response) {
-    console.log('autosyncblocks return');
+  $.get('/matrizToJs' ,function(response) {
     if (!endgame) {
       if (response.ready) blocks = response.blocks;
       autoSyncBlocksInterval = setInterval(syncBlocks, 1000);

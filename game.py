@@ -9,30 +9,33 @@ from constants import i, j, l, o, s, t, z, KEY, DIR, speed, nx, ny, nu, pieces
 
 currentID = 1
 # Seleção de peças.
-sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o}} # peça 0 sempre é a mesma
+sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o, 'id': 0}} # peça 0 sempre é a mesma
 jogadas = {}
 nextPiece = None
 gameMatriz = Matriz()
 
-
-@get('/next-piece/')
+@post('/next-piece/')
 def setNextPiece():
 	global gameMatriz
 	global response, nextPiece, currentID, sendedPieces
 	response.content_type = 'application/json'
-		
-	tipo = pieces[gameMatriz.hashIntValue()]
-	nextPiece = {
-		'type': tipo, 
-		'dir': DIR['UP'], 
-		'x': 4,
-		'y': 0,
-		'id': currentID
-	}
-	sendedPieces[currentID] = nextPiece
-	currentID = currentID + 1
+	
+	if int(request.forms.get('curID')) <= currentID-2:	
+		tipo = pieces[gameMatriz.hashIntValue()]
+		nextPiece = {
+			'type': tipo, 
+			'dir': DIR['UP'], 
+			'x': 4,
+			'y': 0,
+			'id': currentID
+		}
 
-	return json.dumps(nextPiece)
+		sendedPieces[currentID] = nextPiece
+		currentID += 1
+	
+	return json.dumps(sendedPieces[currentID-1])
+
+
 
 
 @get('/matriz')
@@ -66,8 +69,6 @@ def sendjogada():
 	Jdir = jogadas[index]['dir']
 	tipo = jogadas[index]['type']
 
-	print (tipo)
-	print (i)
 	if tipo == i:
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x0F00, 0)
