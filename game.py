@@ -6,6 +6,7 @@ import copy
 from matriz import Matriz
 from random import randint
 from constants import i, j, l, o, s, t, z, KEY, DIR, speed, nx, ny, nu, pieces
+from voto import PosPice, IndVoto, GroupVoto, VotosList
 
 currentID = 1
 # Seleção de peças.
@@ -20,6 +21,7 @@ gameMatriz = Matriz()
 # desde a última requisição. Seto uma flag e reseto no registro da jogada. Se a flag estiver
 # ligada dou a última peça ao invés de gerar uma nova. Olha só, escrevendo encontrei uma solução,
 # mas não vou fazer isso agora. flw. vlw.
+
 def setNextPiece():
 	global gameMatriz, response, nextPiece, currentID, sendedPieces
 	

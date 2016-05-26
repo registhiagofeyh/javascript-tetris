@@ -11,6 +11,15 @@ class Matriz:
 				linha.append(-1)
 			self.matrizJogada.append(linha)
 
+
+	def equal(m):
+		for ii in range(0, ny):
+			for jj in range(0, nx):
+				if m.matrizJogada[ii][jj] != self.matrizJogada[ii][jj]:
+					return False
+		return True
+
+
 	def getMatriz(self):
 		return self.matrizJogada
 
