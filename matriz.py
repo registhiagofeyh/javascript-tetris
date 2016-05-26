@@ -12,12 +12,19 @@ class Matriz:
 			self.matrizJogada.append(linha)
 
 
-	def equal(m):
+	def equal(self, m):
 		for ii in range(0, ny):
 			for jj in range(0, nx):
 				if m.matrizJogada[ii][jj] != self.matrizJogada[ii][jj]:
 					return False
 		return True
+
+
+	def cp(self, m):
+		for ii in range(0, ny):
+			for jj in range(0, nx):
+				self.matrizJogada[ii][jj] = m.matrizJogada[ii][jj]
+
 
 
 	def getMatriz(self):
@@ -118,3 +125,7 @@ class Matriz:
 		self.existsLineFull()
 		#for ii in self.matrizJogada:
 			#print (ii)
+	
+	def printMa(self):
+		for i in self.matrizJogada:
+			print (i)

@@ -6,7 +6,7 @@ import copy
 from matriz import Matriz
 from random import randint
 from constants import i, j, l, o, s, t, z, KEY, DIR, speed, nx, ny, nu, pieces
-from voto import PosPice, IndVoto, GroupVoto, VotosList
+from voto import PosPiece, IndVoto, GroupVoto, VotosList
 
 currentID = 1
 # Seleção de peças.
@@ -14,6 +14,7 @@ sendedPieces = {0: {'y': 0, 'dir': 0, 'x': 7, 'type': o, 'id': 0}} # peça 0 sem
 jogadas = {}
 nextPiece = None
 gameMatriz = Matriz()
+votos = VotosList()
 
 
 # Atualmente está gerando um novo ID cada requisição do /matrizToJs, necessário verificar isso
@@ -36,7 +37,6 @@ def setNextPiece():
 
 	sendedPieces[currentID] = nextPiece
 	currentID += 1
-	
 	return nextPiece
 
 
@@ -47,11 +47,11 @@ def returnMatriz():
 	response.content_type = 'application/json'
 
 	return json.dumps({'ready': True, 'blocks': gameMatriz.prepareToJS(), 'nextpiece': setNextPiece()})
-	
+
 
 @post('/jogada/')
 def sendjogada():
-	global gameMatriz
+	global gameMatriz 
 	global nextPiece, sendedPieces, jogadas
 	jogadas[int(request.forms.get('id'))] = {
 		'type': sendedPieces[int(request.forms.get('id'))]['type'],
@@ -66,7 +66,14 @@ def sendjogada():
 	Jdir = jogadas[index]['dir']
 	tipo = jogadas[index]['type']
 
+	userID = 0
+	pieceId = -1
+
+	crrMatriz = Matriz()
+	crrMatriz.cp(gameMatriz)
+
 	if tipo == i:
+		pieceId = 0
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x0F00, 0)
 		elif Jdir == 1:
@@ -76,6 +83,7 @@ def sendjogada():
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x4444, 0)
 	elif tipo == j:
+		pieceId = 1
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x44C0, 1)
 		elif Jdir == 1:
@@ -85,6 +93,7 @@ def sendjogada():
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x0E20, 1)
 	elif tipo == l:
+		pieceId = 2
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x4460, 2)
 		elif Jdir == 1:
@@ -94,8 +103,10 @@ def sendjogada():
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x2E00, 2)
 	elif tipo == o:
+		pieceId = 3
 		gameMatriz.updateMatrix(x, y, 0xCC00, 3)
 	elif tipo == s:
+		pieceId = 4
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x06C0, 4)
 		elif Jdir == 1:
@@ -105,6 +116,7 @@ def sendjogada():
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x4620, 4)
 	elif tipo == t:
+		pieceId = 5
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x0E40, 5)
 		elif Jdir == 1:
@@ -114,6 +126,7 @@ def sendjogada():
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x4640, 5)
 	elif tipo == z:
+		pieceId = 6
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x0C60, 6)
 		elif Jdir == 1:
@@ -123,7 +136,12 @@ def sendjogada():
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x2640, 6)
 
-
+	votos.add(GroupVoto(crrMatriz, userID, x, y, pieceId), userID)
+	for ii in votos.votos:
+		print("nv")
+		ii.curVoto.printMa()
+		print(ii.playersId)
+		print(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y))
 
 @get('/jogada/')
 @view('jogada')
