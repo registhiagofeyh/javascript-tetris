@@ -21,9 +21,13 @@ class Matriz:
 
 
 	def cp(self, m):
-		for ii in range(0, ny):
-			for jj in range(0, nx):
-				self.matrizJogada[ii][jj] = m.matrizJogada[ii][jj]
+		self.matrizJogada = []
+
+		for ii in range(ny):
+			ll = []
+			for jj in range(nx):
+				ll.append(m.matrizJogada[ii][jj])
+			self.matrizJogada.append(ll)
 
 
 
@@ -127,5 +131,5 @@ class Matriz:
 			#print (ii)
 	
 	def printMa(self):
-		for i in self.matrizJogada:
-			print (i)
+		for ii in range(ny):
+			print(self.matrizJogada[ii])
