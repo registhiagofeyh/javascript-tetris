@@ -15,7 +15,9 @@ jogadas = {}
 nextPiece = None
 gameMatriz = Matriz()
 votos = VotosList()
-
+GlobalVotos = VotosList()
+userID = 0
+PS = set( ['localhost:8080', 'localhost:8081', 'localhost:8082'])
 
 # Atualmente está gerando um novo ID cada requisição do /matrizToJs, necessário verificar isso
 # ainda não sei qual a melhor solução. Talvez verificando se houve um registro da jogada
@@ -39,6 +41,38 @@ def setNextPiece():
 	currentID += 1
 	return nextPiece
 
+@get('/votos')# get peers retorna a quem pedir a lista de votos do server em formato json
+def getPeers():
+	lt = []
+	for ii in votos.votos:
+		llt = []
+		cont = 0
+
+		for jj in ii.playersId:
+			cont+=1
+		llt.append(cont)
+		llt.append(ii.curVoto.matrizJogada)
+		llt.append(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y))
+		
+		lt.append(llt)
+	jason_data = json.dumps(lt)
+	return jason_data
+
+
+def getVotosFrom(host):
+	link = "http://"+ host + "/messages"
+	try:
+		r = requests.get(link)
+		if r.status_code == 200:
+			obj=json.loads(r.text)
+			return obj
+	except MaxRetryError:
+		print ("Conection Error, número maximo de tentativas!")
+	except requests.exceptions.ConnectionError:
+		print ("Conection Error!")
+
+	return []
+
 
 @get('/matrizToJs')
 def returnMatriz():
@@ -51,7 +85,7 @@ def returnMatriz():
 
 @post('/jogada/')
 def sendjogada():
-	global gameMatriz 
+	global gameMatriz, userID
 	global nextPiece, sendedPieces, jogadas
 	jogadas[int(request.forms.get('id'))] = {
 		'type': sendedPieces[int(request.forms.get('id'))]['type'],
@@ -66,9 +100,9 @@ def sendjogada():
 	Jdir = jogadas[index]['dir']
 	tipo = jogadas[index]['type']
 
-	userID = 0
+	
 	pieceId = -1
-
+	userID+=1
 	crrMatriz = Matriz()
 	crrMatriz.cp(gameMatriz)
 
@@ -139,7 +173,7 @@ def sendjogada():
 	votos.add(GroupVoto(crrMatriz, userID, x, y, pieceId), userID)
 	for ii in votos.votos:
 		print("nv")
-		ii.curVoto.printMa()
+		print (ii.curVoto.printMaToStr())
 		print(ii.playersId)
 		print(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y))
 
@@ -169,5 +203,9 @@ def index():
 def send_static(path):
 	return static_file(path, root='static')
 
+def mainloopV():
+	for p in PS:
+		MS2 = getVotosFrom(p)
+		#for ii in MS2:
 
 run(host='localhost', port=8000)

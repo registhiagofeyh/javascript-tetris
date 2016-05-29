@@ -133,3 +133,10 @@ class Matriz:
 	def printMa(self):
 		for ii in range(ny):
 			print(self.matrizJogada[ii])
+
+	def printMaToStr(self):
+		st = ""
+		for ii in range(ny):
+			st+=str(self.matrizJogada[ii])+"\n"
+		return st
+			
