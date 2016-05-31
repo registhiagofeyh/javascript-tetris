@@ -3,12 +3,14 @@ import sys
 import threading
 import json
 import copy
+from threading import Thread
 import requests
 from matriz import Matriz
 from random import randint
 from constants import i, j, l, o, s, t, z, KEY, DIR, speed, nx, ny, nu, pieces
 from voto import PosPiece, IndVoto, GroupVoto, VotosList
 from urllib3.exceptions import MaxRetryError
+import time
 
 currentID = 1
 # Seleção de peças.
@@ -212,11 +214,15 @@ def getVotosFrom(host):
 
 
 def mainloopV():
-	for p in PS:
-		Vt = getVotosFrom(p)
-		for v in Vt:
-			print (v)
+	while True:
+		time.sleep(1.0)
+		for p in PS:
+			Vt = getVotosFrom(p)
+			for v in Vt:
+				print (v)
 
+thGetVotos=Thread(None, mainloopV, (), {}, None)
+thGetVotos.start()
 port = int(sys.argv[1])
 
 run(host='localhost', port=port)
