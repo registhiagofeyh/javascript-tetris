@@ -3,6 +3,7 @@ import sys
 import threading
 import json
 import copy
+import requests
 from matriz import Matriz
 from random import randint
 from constants import i, j, l, o, s, t, z, KEY, DIR, speed, nx, ny, nu, pieces
@@ -193,19 +194,22 @@ def getVotos():
 	jason_data = json.dumps(lt)
 	return jason_data
 
+
 def getVotosFrom(host):
 	link = "http://"+ host + "/votos"
 	try:
-		r = request.get(link)
-		if r.status_code == 200:
-			obj=json.loads(r.text)
-			return obj
+		print('Try get from: ' + link)
+		r = requests.get(link)
+		print(r)
+		obj=json.loads(r.text)
+		return obj
 	except MaxRetryError:
 		print ("Conection Error, número maximo de tentativas!")
-	except request.exceptions.ConnectionError:
-		print ("Conection Error!")
+	except requests.exceptions.ConnectionError:
+		print("request.get(" + link + ") error")
 
 	return []
+
 
 def mainloopV():
 	for p in PS:
@@ -213,4 +217,6 @@ def mainloopV():
 		for v in Vt:
 			print (v)
 
-run(host='localhost', port=8000)
+port = int(sys.argv[1])
+
+run(host='localhost', port=port)
