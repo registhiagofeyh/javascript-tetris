@@ -1,6 +1,5 @@
 from bottle import run, get, post, view, request, redirect, route, static_file, response
 import sys
-import threading
 import json
 import copy
 from threading import Thread
@@ -142,9 +141,9 @@ def sendjogada():
 			gameMatriz.updateMatrix(x, y, 0x2640, 6)
 
 	votos.add(GroupVoto(crrMatriz, userID, x, y, pieceId), userID)
-
+'''
 	mainloopV()
-'''	for ii in votos.votos:
+	for ii in votos.votos:
 		print("nv")
 		print (ii.curVoto.printMaToStr())
 		print(ii.playersId)
@@ -213,9 +212,11 @@ def getVotosFrom(host):
 	return []
 
 def mainloopV():
+	print ("asuhiauhshasdha\n")
 	global PS
 	while True:
 		time.sleep(1.0)
+		print("out spleep V")
 		for p in PS:
 			Vt = getVotosFrom(p)
 			for v in Vt:
@@ -228,12 +229,14 @@ def mainloopE():
 		for i in GlobalVotos:
 			print (i)
 
+
+thGetVotos=Thread(None, mainloopV, (), {}, None)
+thGetVotos.start()
 port = int(sys.argv[1])
 run(host='localhost', port=port)
 
 
-thGetVotos=Thread(None, mainloopV, (), {}, None)
-thGetVotos.start()
-
+'''
 theEleicao=Thread(None, mainloopE, (), {}, None)
 theEleicao.start()
+'''
