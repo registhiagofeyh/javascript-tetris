@@ -232,11 +232,10 @@ def mainloopE():
 
 thGetVotos=Thread(None, mainloopV, (), {}, None)
 thGetVotos.start()
+
+theEleicao=Thread(None, mainloopE, (), {}, None)
+theEleicao.start()
+
 port = int(sys.argv[1])
 run(host='localhost', port=port)
 
-
-'''
-theEleicao=Thread(None, mainloopE, (), {}, None)
-theEleicao.start()
-'''
