@@ -212,7 +212,6 @@ def getVotosFrom(host):
 	return []
 
 def mainloopV():
-	print ("asuhiauhshasdha\n")
 	global PS
 	while True:
 		time.sleep(1.0)
@@ -229,11 +228,10 @@ def mainloopE():
 		for i in GlobalVotos:
 			print (i)
 
-
-thGetVotos=Thread(None, mainloopV, (), {}, None)
+thGetVotos = Thread(None, mainloopV, (), {}, None)
 thGetVotos.start()
 
-theEleicao=Thread(None, mainloopE, (), {}, None)
+theEleicao = Thread(None, mainloopE, (), {}, None)
 theEleicao.start()
 
 port = int(sys.argv[1])
