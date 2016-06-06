@@ -139,7 +139,8 @@ def sendjogada():
 			gameMatriz.updateMatrix(x, y, 0xC600, 6)
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x2640, 6)
-
+	
+	#votos = VotosList()
 	votos.add(GroupVoto(crrMatriz, userID, x, y, pieceId), userID)
 '''
 	mainloopV()
@@ -181,6 +182,7 @@ def send_static(path):
 @get('/votos')# get peers retorna a quem pedir a lista de votos do server em formato json
 def getVotos():
 	lt = []
+	llt = []
 	for ii in votos.votos:
 		llt = []
 		cont = 0
@@ -211,22 +213,47 @@ def getVotosFrom(host):
 
 	return []
 
+
 def mainloopV():
-	global PS
+	global PS, GlobalVotos
 	while True:
 		time.sleep(1.0)
-		print("out spleep V")
 		for p in PS:
 			Vt = getVotosFrom(p)
 			for v in Vt:
-				print (v)
+				cont = 0
+				nvotos = 0
+				matriz = Matriz()
+				voto = PosPiece(-1,-1,-1)
+				for ii in v:
+					if cont == 0:
+						nvotos+=ii
+					elif cont == 1:
+						matriz.matrizJogada = ii
+					else:
+						ll = ii.split(' ')
+						voto = PosPiece(int(str(ll[2])), int(str(ll[1])), int(str(ll[0])))
+					cont+=1
+				if voto.x == voto.y and voto.piece == voto.x:
+					continue
+				'''print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece))
+				#print("matriz\n"+matriz.printMaToStr())
+				#print("qt->" + str(nvotos))'''
+				GlobalVotos.add(GroupVoto(matriz, p, voto.x, voto.y, voto.piece), p)
 
 def mainloopE():
 	global GlobalVotos
 	while True:
 		time.sleep(20)
-		for i in GlobalVotos:
-			print (i)
+		print("asuaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahdashdaiuhsidahhhhhhhhhhhiushdiauhsiduahisdaushdiauhsihaushdiauhsiduhais")
+		voto = PosPiece(-1, -1, -1)
+		eleito = 0
+		for i in GlobalVotos.votos:
+			if len(i.playersId) > eleito:
+				eleito = len(i.playersId)
+				voto = PosPiece(i.voto.x, i.voto.y, i.voto.piece)
+	
+		print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece))
 
 thGetVotos = Thread(None, mainloopV, (), {}, None)
 thGetVotos.start()
