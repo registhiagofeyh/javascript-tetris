@@ -77,73 +77,97 @@ def sendjogada():
 	userID+=1
 	crrMatriz = Matriz()
 	crrMatriz.cp(gameMatriz)
+	posp = -1
 
 	if tipo == i:
 		pieceId = 0
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x0F00, 0)
+			posp =0x0F00
 		elif Jdir == 1:
 			gameMatriz.updateMatrix(x, y, 0x2222, 0)
+			posp =0x2222
 		elif Jdir == 2:
 			gameMatriz.updateMatrix(x, y, 0x00F0, 0)
+			posp =0x00F0
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x4444, 0)
+			posp =0x4444
 	elif tipo == j:
 		pieceId = 1
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x44C0, 1)
+			posp =0x44C0
 		elif Jdir == 1:
 			gameMatriz.updateMatrix(x, y, 0x8E00, 1)
+			posp =0x8E00
 		elif Jdir == 2:
 			gameMatriz.updateMatrix(x, y, 0x6440, 1)
+			posp =0x6440
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x0E20, 1)
+			posp =0x0E20
 	elif tipo == l:
 		pieceId = 2
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x4460, 2)
+			posp =0x4460
 		elif Jdir == 1:
 			gameMatriz.updateMatrix(x, y, 0x0E80, 2)
+			posp =0xC440
 		elif Jdir == 2:
 			gameMatriz.updateMatrix(x, y, 0xC440, 2)
+			posp =0x2E00
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x2E00, 2)
 	elif tipo == o:
 		pieceId = 3
 		gameMatriz.updateMatrix(x, y, 0xCC00, 3)
+		posp =0xCC00
 	elif tipo == s:
 		pieceId = 4
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x06C0, 4)
+			posp =0x06C0
 		elif Jdir == 1:
 			gameMatriz.updateMatrix(x, y, 0x8C40, 4)
+			posp =0x8C40
 		elif Jdir == 2:
 			gameMatriz.updateMatrix(x, y, 0x6C00, 4)
+			posp =0x6C00
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x4620, 4)
+			posp =0x4620
 	elif tipo == t:
 		pieceId = 5
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x0E40, 5)
+			posp =0x0E40
 		elif Jdir == 1:
 			gameMatriz.updateMatrix(x, y, 0x4C40, 5)
+			posp =0x4C40
 		elif Jdir == 2:
 			gameMatriz.updateMatrix(x, y, 0x4E00, 5)
+			posp =0x4E00
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x4640, 5)
+			posp =0x4640
 	elif tipo == z:
 		pieceId = 6
 		if Jdir == 0:
 			gameMatriz.updateMatrix(x, y, 0x0C60, 6)
+			posp =0x0C60
 		elif Jdir == 1:
 			gameMatriz.updateMatrix(x, y, 0x4C80, 6)
+			posp =0x4C80
 		elif Jdir == 2:
 			gameMatriz.updateMatrix(x, y, 0xC600, 6)
+			posp =0xC600
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x2640, 6)
-	
+			posp =0x2640
 	#votos = VotosList()
-	votos.add(GroupVoto(crrMatriz, userID, x, y, pieceId), userID)
+	votos.add(GroupVoto(crrMatriz, userID, x, y, pieceId, posp), userID)
 '''
 	mainloopV()
 	for ii in votos.votos:
@@ -193,8 +217,8 @@ def getVotos():
 			cont+=1
 		llt.append(cont)
 		llt.append(ii.curVoto.matrizJogada)
-		llt.append(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y))
-		
+		llt.append(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y)+" "+str(ii.voto.pos))
+			
 		lt.append(llt)
 	jason_data = json.dumps(lt)
 	return jason_data
@@ -228,10 +252,11 @@ def mainloopV():
 		for p in PS:
 			Vt = getVotosFrom(p)
 			for v in Vt:
+				print("asasgyasd")
 				cont = 0
 				nvotos = 0
 				matriz = Matriz()
-				voto = PosPiece(-1,-1,-1)
+				voto = PosPiece(-1,-1,-1,-1)
 				for ii in v:
 					if cont == 0:
 						nvotos+=ii
@@ -239,29 +264,30 @@ def mainloopV():
 						matriz.matrizJogada = ii
 					else:
 						ll = ii.split(' ')
-						voto = PosPiece(int(str(ll[2])), int(str(ll[1])), int(str(ll[0])))
+						voto = PosPiece(int(str(ll[2])), int(str(ll[1])), int(str(ll[0])), int(str(ll[3])))
 					cont+=1
+		
 				if voto.x == voto.y and voto.piece == voto.x:
 					continue
-				'''print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece))
+		
+				#print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece)+" "+str(voto.pos))
 				#print("matriz\n"+matriz.printMaToStr())
 				#print("qt->" + str(nvotos))'''
-				GlobalVotos.add(GroupVoto(matriz, p, voto.x, voto.y, voto.piece), p)
+				GroupVotolobalVotos.add(GroupVoto(matriz, p, voto.x, voto.y, voto.piece, voto.pos), p)
 
 def mainloopE():
 	global GlobalVotos
 	while True:
 		time.sleep(20)
 		print("asuaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahdashdaiuhsidahhhhhhhhhhhiushdiauhsiduahisdaushdiauhsihaushdiauhsiduhais")
-		voto = PosPiece(-1, -1, -1)
+		voto = PosPiece(-1, -1, -1, -1)
 		eleito = 0
 		for i in GlobalVotos.votos:
 			if len(i.playersId) > eleito:
 				eleito = len(i.playersId)
-				voto = PosPiece(i.voto.x, i.voto.y, i.voto.piece)
-	
+				voto = PosPiece(i.voto.x, i.voto.y, i.voto.piece, i.voto.pos)
 		atualizaTabuleiro()
-		print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece))
+		print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece)+ " " + str(voto.pos))
 
 thGetVotos = Thread(None, mainloopV, (), {}, None)
 thGetVotos.start()
