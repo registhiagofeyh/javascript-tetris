@@ -21,6 +21,7 @@ votos = VotosList()
 GlobalVotos = VotosList()
 userID = 0
 PS = set(['localhost:8000', 'localhost:8080'])
+gameReady = True
 
 # Atualmente está gerando um novo ID cada requisição do /matrizToJs, necessário verificar isso
 # ainda não sei qual a melhor solução. Talvez verificando se houve um registro da jogada
@@ -29,7 +30,7 @@ PS = set(['localhost:8000', 'localhost:8080'])
 # mas não vou fazer isso agora. flw. vlw.
 
 def setNextPiece():
-	global gameMatriz, response, nextPiece, currentID, sendedPieces
+	global gameMatriz, response, nextPiece, currentID, sendedPieces, gameReady
 	
 	tipo = pieces[gameMatriz.hashIntValue()]
 	nextPiece = {
@@ -41,21 +42,20 @@ def setNextPiece():
 	}
 
 	sendedPieces[currentID] = nextPiece
-	currentID += 1
 	return nextPiece
 
 @get('/matrizToJs')
 def returnMatriz():
-	global gameMatriz
+	global gameMatriz, gameReady
 	
 	response.content_type = 'application/json'
-
-	return json.dumps({'ready': True, 'blocks': gameMatriz.prepareToJS(), 'nextpiece': setNextPiece()})
+	print(gameReady)
+	return json.dumps({'ready': gameReady, 'blocks': gameMatriz.prepareToJS(), 'nextpiece': setNextPiece()})
 
 
 @post('/jogada/')
 def sendjogada():
-	global gameMatriz, userID
+	global gameMatriz, userID, gameReady, currentID
 	global nextPiece, sendedPieces, jogadas
 	jogadas[int(request.forms.get('id'))] = {
 		'type': sendedPieces[int(request.forms.get('id'))]['type'],
@@ -70,7 +70,9 @@ def sendjogada():
 	Jdir = jogadas[index]['dir']
 	tipo = jogadas[index]['type']
 
-	
+	gameReady = False
+	currentID += 1
+
 	pieceId = -1
 	userID+=1
 	crrMatriz = Matriz()
@@ -213,6 +215,11 @@ def getVotosFrom(host):
 
 	return []
 
+def atualizaTabuleiro():
+	global gameReady
+	#... Seu código aqui
+	#...
+	gameReady = True
 
 def mainloopV():
 	global PS, GlobalVotos
@@ -253,6 +260,7 @@ def mainloopE():
 				eleito = len(i.playersId)
 				voto = PosPiece(i.voto.x, i.voto.y, i.voto.piece)
 	
+		atualizaTabuleiro()
 		print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece))
 
 thGetVotos = Thread(None, mainloopV, (), {}, None)
