@@ -13,6 +13,7 @@
       <p><canvas id="upcoming"></canvas></p>
       <p>Pontos <span id="score">00000</span></p>
       <p>Linhas <span id="rows">0</span></p>
+      <p id="paused"><img src="/static/img/pause/1.gif" style="width:70%;" /></p>
     </div>
     <canvas id="canvas">
       Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element

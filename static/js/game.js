@@ -222,6 +222,7 @@ function reset() {
   clearScore();
   setCurrentPiece(next);
   setNextPiece();
+  $('#paused').hide();
 }
 
 function update(idt) {
@@ -296,9 +297,17 @@ function dropPiece() {
 
 var syncInterval = null;
 var BlocksUpdated = false;
+var gif = 1;
 function getUpdatedBlocks() {
   if (syncInterval) clearInterval(syncInterval);
   $.get('/matrizToJs', function(response) {
+    if (response.ready) {
+      $('body').css({'background-color': 'white'});
+      $('#paused').hide('slow');
+    } else {
+      $('body').css({'background-color': 'silver'});
+      $('#paused').show('slow');
+    }
     if (!endgame && response.ready) {
       BlocksUpdated = true;
       blocks = response.blocks;
