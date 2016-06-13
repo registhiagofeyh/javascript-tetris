@@ -20,7 +20,7 @@ gameMatriz = Matriz()
 votos = VotosList()
 GlobalVotos = VotosList()
 userID = 0
-PS = set(['localhost:8000', 'localhost:8080'])
+PS = set(['localhost:8000', 'localhost:8001', 'localhost:8002'])
 gameReady = True
 
 # Atualmente está gerando um novo ID cada requisição do /matrizToJs, necessário verificar isso
@@ -207,6 +207,7 @@ def send_static(path):
 
 @get('/votos')# get peers retorna a quem pedir a lista de votos do server em formato json
 def getVotos():
+	global votos
 	lt = []
 	llt = []
 	for ii in votos.votos:
@@ -239,20 +240,24 @@ def getVotosFrom(host):
 
 	return []
 
-def atualizaTabuleiro():
+def atualizaTabuleiro(voto):
 	global gameReady
+	
+	
+
 	#... Seu código aqui
 	#...
+	votos = []
 	gameReady = True
 
 def mainloopV():
 	global PS, GlobalVotos
 	while True:
-		time.sleep(1.0)
+		time.sleep(1)
 		for p in PS:
 			Vt = getVotosFrom(p)
 			for v in Vt:
-				print("asasgyasd")
+			#	print("asasgyasd")
 				cont = 0
 				nvotos = 0
 				matriz = Matriz()
@@ -270,24 +275,20 @@ def mainloopV():
 				if voto.x == voto.y and voto.piece == voto.x:
 					continue
 		
-				#print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece)+" "+str(voto.pos))
-				#print("matriz\n"+matriz.printMaToStr())
-				#print("qt->" + str(nvotos))'''
-				GroupVotolobalVotos.add(GroupVoto(matriz, p, voto.x, voto.y, voto.piece, voto.pos), p)
+				GlobalVotos.add(GroupVoto(matriz, p, voto.x, voto.y, voto.piece, voto.pos), p)
 
 def mainloopE():
 	global GlobalVotos
 	while True:
-		time.sleep(20)
-		print("asuaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahdashdaiuhsidahhhhhhhhhhhiushdiauhsiduahisdaushdiauhsihaushdiauhsiduhais")
+		time.sleep(45)
 		voto = PosPiece(-1, -1, -1, -1)
 		eleito = 0
 		for i in GlobalVotos.votos:
 			if len(i.playersId) > eleito:
 				eleito = len(i.playersId)
 				voto = PosPiece(i.voto.x, i.voto.y, i.voto.piece, i.voto.pos)
-		atualizaTabuleiro()
-		print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece)+ " " + str(voto.pos))
+		atualizaTabuleiro(voto)
+		#print("Voto->" + str(voto.x)+ " " + str(voto.y) + " " + str(voto.piece)+ " " + str(voto.pos))
 
 thGetVotos = Thread(None, mainloopV, (), {}, None)
 thGetVotos.start()
