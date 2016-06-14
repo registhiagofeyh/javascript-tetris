@@ -108,6 +108,12 @@ class Matriz:
 
 
 	def updateMatrix(self, x, y, block, value):
+		print('~~~~~~~~~~~')
+		print(x)
+		print(y)
+		print(block)
+		print(value)
+		print('~~~~~~~~~~~')
 		for ii in range(3, -1, -1):
 			a = block % 16
 			block = int(block / 16)
