@@ -5,6 +5,8 @@ class Matriz:
 	matrizJogada = []
 
 	def __init__(self):
+		if len(self.matrizJogada) > 10:
+			return
 		for ii in range(0, ny):
 			linha = []
 			for jj in range(0, nx):
@@ -106,6 +108,12 @@ class Matriz:
 
 
 	def updateMatrix(self, x, y, block, value):
+		print('~~~~~~~~~~~')
+		print(x)
+		print(y)
+		print(block)
+		print(value)
+		print('~~~~~~~~~~~')
 		for ii in range(3, -1, -1):
 			a = block % 16
 			block = int(block / 16)
