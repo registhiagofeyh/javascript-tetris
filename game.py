@@ -241,12 +241,15 @@ def getVotosFrom(host):
 	return []
 
 def atualizaTabuleiro(voto):
-	global gameReady
+	global gameReady, jogadas, sendedPieces
 	
-	
+	#currentID+=1
+
 
 	#... Seu código aqui
 	#...
+
+
 	votos = []
 	gameReady = True
 
