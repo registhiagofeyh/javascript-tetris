@@ -5,6 +5,8 @@ class Matriz:
 	matrizJogada = []
 
 	def __init__(self):
+		if len(self.matrizJogada) > 10:
+			return
 		for ii in range(0, ny):
 			linha = []
 			for jj in range(0, nx):
