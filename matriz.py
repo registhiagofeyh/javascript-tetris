@@ -147,4 +147,4 @@ class Matriz:
 		for ii in range(ny):
 			st+=str(self.matrizJogada[ii])+"\n"
 		return st
-			
+	
