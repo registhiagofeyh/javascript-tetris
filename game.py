@@ -166,17 +166,7 @@ def sendjogada():
 		elif Jdir == 3:
 			gameMatriz.updateMatrix(x, y, 0x2640, 6)
 			posp =0x2640
-	#votos = VotosList()
 	votos.add(GroupVoto(crrMatriz, userID, x, y, pieceId, posp), userID)
-'''
-	mainloopV()
-	for ii in votos.votos:
-		print("nv")
-		print (ii.curVoto.printMaToStr())
-		print(ii.playersId)
-		print(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y))
-'''
-	
 
 @get('/jogada/')
 @view('jogada')
