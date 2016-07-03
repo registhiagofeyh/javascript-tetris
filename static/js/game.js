@@ -222,7 +222,7 @@ function reset() {
   clearScore();
   setCurrentPiece(next);
   setNextPiece();
-  $('#paused, #remaining').hide();
+  $('#paused').hide();
 }
 
 function update(idt) {
@@ -301,13 +301,13 @@ var gif = 1;
 function getUpdatedBlocks() {
   if (syncInterval) clearInterval(syncInterval);
   $.get('/matrizToJs', function(response) {
+    $('#remaining').html('<small>Rodada termina em: ' + response.remaining + 's</small>');
     if (response.ready) {
       $('body').css({'background-color': 'white'});
-      $('#paused, #remaining').hide('slow');
+      $('#paused').hide('slow');
     } else {
       $('body').css({'background-color': 'silver'});
-      $('#paused, #remaining').show('slow');
-      $('#remaining').html('<small>' + response.remaining + 's...</small>');
+      $('#paused').show('slow');
     }
     if (!endgame && response.ready) {
       BlocksUpdated = true;
