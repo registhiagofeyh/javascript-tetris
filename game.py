@@ -21,6 +21,7 @@ votos = VotosList()
 GlobalVotos = VotosList()
 userID = 0
 PS = set(['localhost:8000', 'localhost:8001', 'localhost:8002'])
+psID = {} #armazena o último ID do host
 gameReady = True
 
 # Atualmente está gerando um novo ID cada requisição do /matrizToJs, necessário verificar isso
@@ -199,7 +200,7 @@ def returnMatriz():
 
 @get('/votos')# get peers retorna a quem pedir a lista de votos do server em formato json
 def getVotos():
-	global votos
+	global votos, currentID
 	lt = []
 	llt = []
 	for ii in votos.votos:
@@ -213,7 +214,7 @@ def getVotos():
 		llt.append(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y)+" "+str(ii.voto.pos))
 			
 		lt.append(llt)
-	json_data = json.dumps(lt)
+	json_data = {'v': json.dumps(lt), 'id': currentID}
 	return json_data
 
 @get('/matriz')
@@ -230,11 +231,14 @@ def getVotosFrom(host):
 		r = requests.get(link)
 		print(r)
 		obj=json.loads(r.text)
-		return obj
+		psID['host'] = obj['id']
+		return json.loads(obj['v'])
 	except MaxRetryError:
 		print ("Conection Error, número maximo de tentativas!")
 	except requests.exceptions.ConnectionError:
 		print("request.get(" + link + ") error")
+	except json.decoder.JSONDecodeError:
+		print('Invalid returned value')
 	return []
 
 def atualizaTabuleiro(voto):
@@ -246,7 +250,11 @@ def atualizaTabuleiro(voto):
 	print(voto.pos)
 	print(voto.piece)
 
-	gameMatriz.updateMatrix(voto.y, voto.x, voto.pos, voto.piece)
+	try:
+		gameMatriz.updateMatrix(voto.y, voto.x, voto.pos, voto.piece)
+	except IndexError:
+		print('Índice inválido, ignora')
+
 	
 	gameReady = True
 	#print('MATRIZMATRIZMATRIZMATRIZMATRIZMATRIZMATRIZ')
@@ -305,7 +313,7 @@ def mainloopE():
 
 
 
-'''def getIdFrom(host):
+def getIdFrom(host):
 	link = "http://"+ host + "/vectorClockId"
 	try:
 		print('Try get from: ' + link)
@@ -337,20 +345,24 @@ def mainloopVector():
 	global gameMatriz
 	while True:
 		time.sleep(1)
-		for p in PS:
-			if getIdFrom(p) > currentID:
-				m = getMatrizFrom(p)
-				gameMatriz.cp(m)
+		try:
+			for p in PS:
+				print('###' + p + ': ' + str(psID[p]) + '|' + str(currentID))
+				if psID[p] > currentID:
+					m = getMatrizFrom(p)
+					gameMatriz.cp(m)
+		except KeyError:
+			print('ID ainda não sincronizado')
 	
-'''
+
 thGetVotos = Thread(None, mainloopV, (), {}, None)
 thGetVotos.start()
 
 theEleicao = Thread(None, mainloopE, (), {}, None)
 theEleicao.start()
 
-#thVectorClocks = Thread(None, mainloopVector, (), {}, None)
-#thVectorClocks.start()
+thVectorClocks = Thread(None, mainloopVector, (), {}, None)
+thVectorClocks.start()
 
 port = int(sys.argv[1])
 run(host='localhost', port=port)
