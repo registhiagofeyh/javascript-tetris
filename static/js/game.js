@@ -130,6 +130,7 @@ function run() {
   showStats(); // initialize FPS counter
   addEvents(); // attach keydown and resize events
   syncBlocks();
+  loopRemainingTime();
 
   var last = now = timestamp();
   function frame() {
@@ -295,13 +296,21 @@ function dropPiece() {
   getUpdatedBlocks();
 }
 
+var remaining = 30;
+function loopRemainingTime() {
+  setInterval(function() {
+    $('#remaining').html('<small>Rodada termina em: ' + remaining + 's</small>');
+    remaining--;
+  }, 1000);
+}
+
 var syncInterval = null;
 var BlocksUpdated = false;
 var gif = 1;
 function getUpdatedBlocks() {
   if (syncInterval) clearInterval(syncInterval);
   $.get('/matrizToJs', function(response) {
-    $('#remaining').html('<small>Rodada termina em: ' + response.remaining + 's</small>');
+    remaining = response.remaining;
     if (response.ready) {
       $('body').css({'background-color': 'white'});
       $('#paused').hide('slow');
