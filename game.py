@@ -296,6 +296,9 @@ def mainloopE():
 			if len(i.playersId) > eleito:
 				eleito = len(i.playersId)
 				voto = PosPiece(i.voto.x, i.voto.y, i.voto.piece, i.voto.pos)
+			elif len(i.playersId) == eleito and (i.voto.x > voto.x or (i.voto.x and voto.x and i.voto.y > voto.y)):
+				eleito = len(i.playersId)
+				voto = PosPiece(i.voto.x, i.voto.y, i.voto.piece, i.voto.pos)
 		atualizaTabuleiro(voto)
 		votos = VotosList()
 		GlobalVotos = VotosList()
