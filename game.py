@@ -317,9 +317,10 @@ def mainloopE():
 			elif len(i.playersId) == eleito and (i.voto.x > voto.x or (i.voto.x and voto.x and i.voto.y > voto.y)):
 				eleito = len(i.playersId)
 				voto = PosPiece(i.voto.x, i.voto.y, i.voto.piece, i.voto.pos)
-		atualizaTabuleiro(voto)
-		votos = VotosList()
-		GlobalVotos = VotosList()
+		if not(voto.x == -1 and voto.y == -1 and voto.piece == -1): 
+			atualizaTabuleiro(voto)
+			votos = VotosList()
+			GlobalVotos = VotosList()
 
 
 
