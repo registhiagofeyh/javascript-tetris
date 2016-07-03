@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 from bottle import run, get, post, view, request, redirect, route, static_file, response
 import sys
 import json
@@ -204,7 +202,7 @@ def returnMatriz():
 
 @get('/votos')# get peers retorna a quem pedir a lista de votos do server em formato json
 def getVotos():
-	global votos, currentID
+	global votos, currentID, remainingTimeMainSleep
 	lt = []
 	llt = []
 	for ii in votos.votos:
@@ -218,7 +216,7 @@ def getVotos():
 		llt.append(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y)+" "+str(ii.voto.pos))
 			
 		lt.append(llt)
-	json_data = {'v': json.dumps(lt), 'id': currentID}
+	json_data = {'v': json.dumps(lt), 'id': currentID, 't': remainingTimeMainSleep}
 	return json_data
 
 @get('/matriz')
@@ -229,13 +227,15 @@ def printMatrizHTML():
 
 
 def getVotosFrom(host):
-	global psID
+	global psID, remainingTimeMainSleep
 	link = "http://"+ host + "/votos"
 	try:
 		#print('Try get from: ' + link)
 		r = requests.get(link)
 		obj=json.loads(r.text)
 		psID[host] = obj['id']
+		if obj['t'] < remainingTimeMainSleep:
+			remainingTimeMainSleep = obj['t']
 		return json.loads(obj['v'])
 	except MaxRetryError:
 		print ("Conection Error, número maximo de tentativas!")
