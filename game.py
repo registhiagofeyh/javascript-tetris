@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+#
 from bottle import run, get, post, view, request, redirect, route, static_file, response
 import sys
 import json
@@ -325,7 +327,9 @@ def getIdFrom(host):
 		print ("Conection Error, número maximo de tentativas!")
 	except requests.exceptions.ConnectionError:
 		print("request.get(" + link + ") error")
-	return []
+	except json.decoder.JSONDecodeError:
+		print("Valor inválido")
+	return 0
 
 def getMatrizFrom(host):
 	link = "http://"+ host + "/gameMatriz"
@@ -342,17 +346,18 @@ def getMatrizFrom(host):
 	return []
 
 def mainloopVector():
-	global gameMatriz
+	global gameMatriz, currentID
+	_p = 0
 	while True:
 		time.sleep(1)
 		try:
 			for p in PS:
-				print('###' + p + ': ' + str(psID[p]) + '|' + str(currentID))
+				_p = p
 				if psID[p] > currentID:
 					m = getMatrizFrom(p)
 					gameMatriz.cp(m)
 		except KeyError:
-			print('ID ainda não sincronizado')
+			psID[_p] = getIdFrom(_p)
 	
 
 thGetVotos = Thread(None, mainloopV, (), {}, None)
