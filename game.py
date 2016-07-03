@@ -25,6 +25,7 @@ userID = 0
 PS = set(['localhost:8000', 'localhost:8001', 'localhost:8002'])
 psID = {} #armazena o último ID do host
 gameReady = True
+remainingTimeMainSleep = 0
 
 # Atualmente está gerando um novo ID cada requisição do /matrizToJs, necessário verificar isso
 # ainda não sei qual a melhor solução. Talvez verificando se houve um registro da jogada
@@ -54,11 +55,11 @@ def setNextPiece():
 
 @get('/matrizToJs')
 def returnMatriz():
-	global gameMatriz, gameReady
+	global gameMatriz, gameReady, remainingTimeMainSleep
 	
 	response.content_type = 'application/json'
 	#print(gameReady)
-	return json.dumps({'ready': gameReady, 'blocks': gameMatriz.prepareToJS(), 'nextpiece': setNextPiece()})
+	return json.dumps({'ready': gameReady, 'remaining':  remainingTimeMainSleep, 'blocks': gameMatriz.prepareToJS(), 'nextpiece': setNextPiece()})
 
 
 @post('/jogada/')
@@ -298,9 +299,15 @@ def mainloopV():
 
 
 def mainloopE():
-	global GlobalVotos, votos
+	global GlobalVotos, votos, remainingTimeMainSleep
+	sleepTime = 30
+	remainingTimeMainSleep = sleepTime
 	while True:
-		time.sleep(30)
+		if remainingTimeMainSleep:
+			time.sleep(1)
+			remainingTimeMainSleep -= 1
+			continue
+		remainingTimeMainSleep = sleepTime
 		voto = PosPiece(-1, -1, -1, -1)
 		eleito = 0
 		for i in GlobalVotos.votos:

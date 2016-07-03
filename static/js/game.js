@@ -222,7 +222,7 @@ function reset() {
   clearScore();
   setCurrentPiece(next);
   setNextPiece();
-  $('#paused').hide();
+  $('#paused, #remaining').hide();
 }
 
 function update(idt) {
@@ -303,10 +303,11 @@ function getUpdatedBlocks() {
   $.get('/matrizToJs', function(response) {
     if (response.ready) {
       $('body').css({'background-color': 'white'});
-      $('#paused').hide('slow');
+      $('#paused, #remaining').hide('slow');
     } else {
       $('body').css({'background-color': 'silver'});
-      $('#paused').show('slow');
+      $('#paused, #remaining').show('slow');
+      $('#remaining').html('<small>' + response.remaining + 's...</small>');
     }
     if (!endgame && response.ready) {
       BlocksUpdated = true;
