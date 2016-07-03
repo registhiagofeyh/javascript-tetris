@@ -334,8 +334,6 @@ def getIdFrom(host):
 		print ("Conection Error, número maximo de tentativas!")
 	except requests.exceptions.ConnectionError:
 		print("request.get(" + link + ") error")
-	except json.decoder.JSONDecodeError:
-		print("Valor inválido")
 	except ValueError:
 		print('Valor inválido')
 	return 0
