@@ -329,6 +329,8 @@ def getIdFrom(host):
 		print("request.get(" + link + ") error")
 	except json.decoder.JSONDecodeError:
 		print("Valor inválido")
+	except ValueError:
+		print('Valor inválido')
 	return 0
 
 def getMatrizFrom(host):
