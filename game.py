@@ -198,7 +198,8 @@ def send_static(path):
 @get('/gameMatriz')
 def returnMatriz():
 	global gameMatriz
-	return jason.dumps(gameMatriz.matrizJogada);
+	print('Matriz solicitada')
+	return json.dumps(gameMatriz.matrizJogada);
 
 @get('/votos')# get peers retorna a quem pedir a lista de votos do server em formato json
 def getVotos():
@@ -227,13 +228,13 @@ def printMatrizHTML():
 
 
 def getVotosFrom(host):
+	global psID
 	link = "http://"+ host + "/votos"
 	try:
-		print('Try get from: ' + link)
+		#print('Try get from: ' + link)
 		r = requests.get(link)
-		print(r)
 		obj=json.loads(r.text)
-		psID['host'] = obj['id']
+		psID[host] = obj['id']
 		return json.loads(obj['v'])
 	except MaxRetryError:
 		print ("Conection Error, número maximo de tentativas!")
@@ -318,9 +319,8 @@ def mainloopE():
 def getIdFrom(host):
 	link = "http://"+ host + "/vectorClockId"
 	try:
-		print('Try get from: ' + link)
+		#print('Try get from: ' + link)
 		r = requests.get(link)
-		print(r)
 		obj=json.loads(r.text)
 		return obj
 	except MaxRetryError:
@@ -336,9 +336,8 @@ def getIdFrom(host):
 def getMatrizFrom(host):
 	link = "http://"+ host + "/gameMatriz"
 	try:
-		print('Try get from: ' + link)
+		#print('Try get from: ' + link)
 		r = requests.get(link)
-		print(r)
 		obj=json.loads(r.text)
 		return obj
 	except MaxRetryError:
@@ -348,10 +347,11 @@ def getMatrizFrom(host):
 	return []
 
 def mainloopVector():
-	global gameMatriz, currentID
+	global gameMatriz, currentID, psID
 	_p = 0
 	while True:
 		time.sleep(1)
+		print(psID)
 		try:
 			for p in PS:
 				_p = p
@@ -372,5 +372,6 @@ thVectorClocks = Thread(None, mainloopVector, (), {}, None)
 thVectorClocks.start()
 
 port = int(sys.argv[1])
-run(host='localhost', port=port)
+run(host='localhost', port=port, quiet=True)
+
 

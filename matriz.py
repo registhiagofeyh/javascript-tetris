@@ -17,8 +17,11 @@ class Matriz:
 	def equal(self, m):
 		for ii in range(0, ny):
 			for jj in range(0, nx):
-				if m.matrizJogada[ii][jj] != self.matrizJogada[ii][jj]:
-					return False
+				try:
+					if m.matrizJogada[ii][jj] != self.matrizJogada[ii][jj]:
+						return False
+				except IndexError:
+					return False 
 		return True
 
 
@@ -28,7 +31,7 @@ class Matriz:
 		for ii in range(ny):
 			ll = []
 			for jj in range(nx):
-				ll.append(m.matrizJogada[ii][jj])
+				ll.append(m[ii][jj])
 			self.matrizJogada.append(ll)
 
 
