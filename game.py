@@ -32,7 +32,7 @@ def getVectorClock():
 def setNextPiece():
 	global gameMatriz, response, nextPiece, currentID, sendedPieces, gameReady
 	
-	tipo = pieces[gameMatriz.hashIntValue()]
+	tipo = pieces[gameMatriz.hashIntValue(currentID)]
 	nextPiece = {
 		'type': tipo, 
 		'dir': DIR['UP'], 
@@ -70,7 +70,6 @@ def recievejogada():
 	tipo = jogadas[index]['type']
 
 	gameReady = False
-	currentID += 1
 
 	pieceId = -1
 	userID+=1
@@ -236,7 +235,7 @@ def atualizaTabuleiro(voto):
 	except IndexError:
 		print('Índice inválido, ignora')
 
-	
+	currentID += 1
 	gameReady = True
 
 
@@ -269,7 +268,7 @@ def mainloopV():
 
 def mainloopE():
 	global GlobalVotos, votos, remainingTimeMainSleep
-	sleepTime = 30
+	sleepTime = 15
 	remainingTimeMainSleep = sleepTime
 	while True:
 		if remainingTimeMainSleep:
@@ -298,6 +297,7 @@ def getIdFrom(host):
 	try:
 		r = requests.get(link)
 		obj=json.loads(r.text)
+		print('ID recebido do host: ' + str(obj))
 		return obj
 	except MaxRetryError:
 		print ("Conection Error, número maximo de tentativas!")
@@ -331,6 +331,7 @@ def mainloopVector():
 				if psID[p] > currentID:
 					m = getMatrizFrom(p)
 					gameMatriz.cp(m)
+					currentID = psID[p]
 		except KeyError:
 			psID[_p] = getIdFrom(_p)
 	

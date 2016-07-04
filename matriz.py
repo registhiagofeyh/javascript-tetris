@@ -74,8 +74,8 @@ class Matriz:
 		return ll
 	
 
-	def hashIntValue(self):
-		somatot = 0
+	def hashIntValue(self, currentID):
+		somatot = currentID
 		for ii in range(ny):
 			soma = 0
 			for jj in range(nx):
