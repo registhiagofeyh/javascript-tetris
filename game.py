@@ -25,13 +25,6 @@ psID = {} #armazena o último ID do host
 gameReady = True
 remainingTimeMainSleep = 0
 
-# Atualmente está gerando um novo ID cada requisição do /matrizToJs, necessário verificar isso
-# ainda não sei qual a melhor solução. Talvez verificando se houve um registro da jogada
-# desde a última requisição. Seto uma flag e reseto no registro da jogada. Se a flag estiver
-# ligada dou a última peça ao invés de gerar uma nova. Olha só, escrevendo encontrei uma solução,
-# mas não vou fazer isso agora. flw. vlw.
-
-
 @get('vectorClockId')
 def getVectorClock():
 	return currentID
@@ -56,7 +49,6 @@ def returnMatriz():
 	global gameMatriz, gameReady, remainingTimeMainSleep
 	
 	response.content_type = 'application/json'
-	#print(gameReady)
 	return json.dumps({'ready': gameReady, 'remaining':  remainingTimeMainSleep, 'blocks': gameMatriz.prepareToJS(), 'nextpiece': setNextPiece()})
 
 
@@ -77,13 +69,6 @@ def recievejogada():
 	Jdir = jogadas[index]['dir']
 	tipo = jogadas[index]['type']
 
-	'''print('############')
-	print(x)
-	print(y)
-	print(Jdir)
-	print(tipo)
-	print('############')
-'''
 	gameReady = False
 	currentID += 1
 
@@ -157,15 +142,7 @@ def recievejogada():
 			posp =0x2640
 	#votos = VotosList()
 	votos.add(GroupVoto(crrMatriz, userID, x, y, pieceId, posp), userID)
-'''
-	mainloopV()
-	for ii in votos.votos:
-		print("nv")
-		print (ii.curVoto.printMaToStr())
-		print(ii.playersId)
-		print(str(ii.voto.piece)+" "+str(ii.voto.x)+" "+str(ii.voto.y))
-'''
-	
+
 
 @get('/jogada/')
 @view('jogada')
@@ -261,8 +238,7 @@ def atualizaTabuleiro(voto):
 
 	
 	gameReady = True
-	#print('MATRIZMATRIZMATRIZMATRIZMATRIZMATRIZMATRIZ')
-	#print(gameMatriz.matrizJogada)
+
 
 
 def mainloopV():
@@ -286,13 +262,6 @@ def mainloopV():
 						voto = PosPiece(int(str(ll[2])), int(str(ll[1])), int(str(ll[0])), int(str(ll[3])))
 					cont+=1
 				
-				'''		print("Matriz")
-				print(matriz.matrizJogada)
-				print("---------------------")
-				print("Global")
-				print(gameMatriz.matrizJogada)
-				print("---------------------")
-				'''	
 				if voto.x == voto.y and voto.piece == voto.x:
 					continue
 				GlobalVotos.add(GroupVoto(gameMatriz, p, voto.x, voto.y, voto.piece, voto.pos), p)
@@ -327,7 +296,6 @@ def mainloopE():
 def getIdFrom(host):
 	link = "http://"+ host + "/vectorClockId"
 	try:
-		#print('Try get from: ' + link)
 		r = requests.get(link)
 		obj=json.loads(r.text)
 		return obj
@@ -342,7 +310,6 @@ def getIdFrom(host):
 def getMatrizFrom(host):
 	link = "http://"+ host + "/gameMatriz"
 	try:
-		#print('Try get from: ' + link)
 		r = requests.get(link)
 		obj=json.loads(r.text)
 		return obj
