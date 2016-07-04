@@ -32,7 +32,7 @@ def getVectorClock():
 def setNextPiece():
 	global gameMatriz, response, nextPiece, currentID, sendedPieces, gameReady
 	
-	tipo = pieces[gameMatriz.hashIntValue(currentID)]
+	tipo = pieces[gameMatriz.hashIntValue()]
 	nextPiece = {
 		'type': tipo, 
 		'dir': DIR['UP'], 
