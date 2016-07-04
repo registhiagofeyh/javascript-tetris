@@ -241,11 +241,12 @@ def atualizaTabuleiro(voto):
 
 
 def mainloopV():
-	global PS, GlobalVotos, gameMatriz
+	global PS, GlobalVotos, gameMatriz, psID, currentID
 	while True:
 		time.sleep(1)
 		for p in PS:
 			Vt = getVotosFrom(p)
+			if not p in psID or currentID > psID[p]: continue
 			for v in Vt:
 				cont = 0
 				nvotos = 0
