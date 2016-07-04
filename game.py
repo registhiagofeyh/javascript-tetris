@@ -269,7 +269,7 @@ def mainloopV():
 
 def mainloopE():
 	global GlobalVotos, votos, remainingTimeMainSleep
-	sleepTime = 15
+	sleepTime = 25
 	remainingTimeMainSleep = sleepTime
 	while True:
 		if remainingTimeMainSleep:
