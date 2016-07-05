@@ -299,7 +299,8 @@ function dropPiece() {
 var remaining = 30;
 function loopRemainingTime() {
   setInterval(function() {
-    $('#remaining').html('<small>Rodada termina em: ' + remaining + 's</small>');
+    if (remaining >= 0)
+      $('#remaining').html('<small>Rodada termina em: ' + remaining + 's</small>');
     remaining--;
   }, 1000);
 }
