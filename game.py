@@ -269,7 +269,7 @@ def mainloopV():
 
 def mainloopE():
 	global GlobalVotos, votos, remainingTimeMainSleep
-	sleepTime = 25
+	sleepTime = 15
 	remainingTimeMainSleep = sleepTime
 	while True:
 		if remainingTimeMainSleep:
@@ -332,10 +332,18 @@ def mainloopVector():
 				if psID[p] > currentID:
 					m = getMatrizFrom(p)
 					gameMatriz.cp(m)
-					currentID = psID[p]
+					currentID = maxpsID()
 		except KeyError:
 			psID[_p] = getIdFrom(_p)
-	
+
+
+def maxpsID():
+	global psID
+	maximo = -1
+	for host in psID:
+		if psID[host] > maximo:
+			maximo = psID[host]
+	return int(maximo)
 
 thGetVotos = Thread(None, mainloopV, (), {}, None)
 thGetVotos.start()
