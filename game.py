@@ -203,14 +203,14 @@ def printMatrizHTML():
 
 
 def getVotosFrom(host):
-	global psID, remainingTimeMainSleep
+	global psID, remainingTimeMainSleep, currentID
 	link = "http://"+ host + "/votos"
 	try:
 		#print('Try get from: ' + link)
 		r = requests.get(link)
 		obj=json.loads(r.text)
 		psID[host] = obj['id']
-		if obj['t'] < remainingTimeMainSleep:
+		if obj['t'] < remainingTimeMainSleep and obj['id'] == currentID:
 			remainingTimeMainSleep = obj['t']
 		return json.loads(obj['v'])
 	except MaxRetryError:
